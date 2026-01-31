@@ -411,6 +411,25 @@
         </div>
     </div>
 
+    <!-- Question Modal -->
+    <div class="question-modal-overlay" id="questionModalOverlay">
+        <div class="question-modal">
+            <div class="question-modal-header">
+                <h2>Questions</h2>
+            </div>
+            <div class="question-modal-body" id="questionModalBody">
+                <!-- Question content will be dynamically inserted here -->
+            </div>
+            <div class="question-modal-footer">
+                <button class="btn-modal-back" id="modalBackBtn" onclick="handleModalBack()">Back</button>
+                <div class="question-progress" id="questionProgress">
+                    <!-- Progress dots will be inserted here -->
+                </div>
+                <button class="btn-modal-next" id="modalNextBtn" onclick="handleModalNext()">Next</button>
+            </div>
+        </div>
+    </div>
+
     <script src="claude-api.js"></script>
     <script src="builder.js"></script>
 </body>

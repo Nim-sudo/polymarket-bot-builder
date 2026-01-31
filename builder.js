@@ -294,6 +294,12 @@ function sendMessage() {
 
     // Generate AI response
     generateAIResponse(chat, message).then(response => {
+        // If response is null, modal was shown instead
+        if (response === null) {
+            updateStatus('Waiting for your answers...', false);
+            return;
+        }
+
         // Track plan progress
         if (chat.planMode && chat.planAnswers < 4) {
             chat.planAnswers++;
@@ -404,6 +410,17 @@ async function generateAIResponse(chat, message) {
             }));
 
             const response = await claudeAPI.generateResponse(message, history);
+
+            // Check if response contains structured questions for modal
+            if (chat.planMode) {
+                const questions = parseQuestionsFromResponse(response);
+                if (questions && questions.length > 0) {
+                    // Show modal with questions instead of text response
+                    showQuestionModal(questions);
+                    return null; // Don't add message to chat yet
+                }
+            }
+
             return response;
         } catch (error) {
             console.error('Claude API failed, using fallback:', error);
@@ -1093,3 +1110,215 @@ window.addEventListener('load', () => {
         hideWelcomeScreen();
     }
 });
+
+// Question Modal State
+let currentQuestions = [];
+let currentQuestionIndex = 0;
+let questionAnswers = {};
+
+function showQuestionModal(questions) {
+    currentQuestions = questions;
+    currentQuestionIndex = 0;
+    questionAnswers = {};
+    
+    const overlay = document.getElementById('questionModalOverlay');
+    overlay.classList.add('active');
+    
+    renderQuestion();
+    updateProgress();
+}
+
+function hideQuestionModal() {
+    const overlay = document.getElementById('questionModalOverlay');
+    overlay.classList.remove('active');
+}
+
+function renderQuestion() {
+    const question = currentQuestions[currentQuestionIndex];
+    const body = document.getElementById('questionModalBody');
+    
+    let html = `<div class="question-title">${question.question}</div>`;
+    
+    if (question.type === 'single') {
+        // Radio buttons
+        question.options.forEach((option, idx) => {
+            const checked = questionAnswers[currentQuestionIndex] === option.label ? 'checked' : '';
+            const selected = checked ? 'selected' : '';
+            html += `
+                <label class="question-option ${selected}" onclick="selectOption(${currentQuestionIndex}, '${option.label.replace(/'/g, "\'")}', 'single')">
+                    <input type="radio" name="q${currentQuestionIndex}" value="${option.label}" ${checked}>
+                    <div class="question-option-content">
+                        <span class="question-option-label">${option.label}</span>
+                        <span class="question-option-description">${option.description}</span>
+                    </div>
+                </label>
+            `;
+        });
+    } else if (question.type === 'multiple') {
+        // Checkboxes
+        const answers = questionAnswers[currentQuestionIndex] || [];
+        question.options.forEach((option, idx) => {
+            const checked = answers.includes(option.label) ? 'checked' : '';
+            const selected = checked ? 'selected' : '';
+            html += `
+                <label class="question-option ${selected}" onclick="toggleOption(${currentQuestionIndex}, '${option.label.replace(/'/g, "\'")}')">
+                    <input type="checkbox" value="${option.label}" ${checked}>
+                    <div class="question-option-content">
+                        <span class="question-option-label">${option.label}</span>
+                        <span class="question-option-description">${option.description}</span>
+                    </div>
+                </label>
+            `;
+        });
+    } else if (question.type === 'text' || question.type === 'number') {
+        // Text input
+        const value = questionAnswers[currentQuestionIndex] || '';
+        html += `
+            <input 
+                type="${question.type}" 
+                class="question-text-input" 
+                id="textInput${currentQuestionIndex}"
+                placeholder="${question.placeholder || 'Enter your answer'}"
+                value="${value}"
+                oninput="updateTextAnswer(${currentQuestionIndex}, this.value)"
+            />
+        `;
+    }
+    
+    body.innerHTML = html;
+    updateProgress();
+    updateButtons();
+}
+
+function selectOption(questionIdx, value, type) {
+    questionAnswers[questionIdx] = value;
+    // Re-render to update selected state
+    renderQuestion();
+}
+
+function toggleOption(questionIdx, value) {
+    if (!questionAnswers[questionIdx]) {
+        questionAnswers[questionIdx] = [];
+    }
+    const answers = questionAnswers[questionIdx];
+    const idx = answers.indexOf(value);
+    if (idx > -1) {
+        answers.splice(idx, 1);
+    } else {
+        answers.push(value);
+    }
+    renderQuestion();
+}
+
+function updateTextAnswer(questionIdx, value) {
+    questionAnswers[questionIdx] = value;
+    updateButtons();
+}
+
+function updateProgress() {
+    const progressContainer = document.getElementById('questionProgress');
+    let html = '';
+    for (let i = 0; i < currentQuestions.length; i++) {
+        let className = 'progress-dot';
+        if (i < currentQuestionIndex) className += ' completed';
+        if (i === currentQuestionIndex) className += ' active';
+        html += `<div class="${className}"></div>`;
+    }
+    progressContainer.innerHTML = html;
+}
+
+function updateButtons() {
+    const backBtn = document.getElementById('modalBackBtn');
+    const nextBtn = document.getElementById('modalNextBtn');
+    
+    // Disable back on first question
+    backBtn.disabled = currentQuestionIndex === 0;
+    
+    // Check if current question is answered
+    const hasAnswer = questionAnswers[currentQuestionIndex] !== undefined && 
+                     questionAnswers[currentQuestionIndex] !== '' &&
+                     (Array.isArray(questionAnswers[currentQuestionIndex]) ? 
+                      questionAnswers[currentQuestionIndex].length > 0 : true);
+    
+    nextBtn.disabled = !hasAnswer;
+    
+    // Change button text on last question
+    if (currentQuestionIndex === currentQuestions.length - 1) {
+        nextBtn.textContent = 'Finish';
+    } else {
+        nextBtn.textContent = 'Next';
+    }
+}
+
+function handleModalBack() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuestion();
+    }
+}
+
+function handleModalNext() {
+    if (currentQuestionIndex < currentQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+    } else {
+        // Finished all questions
+        finishQuestions();
+    }
+}
+
+function finishQuestions() {
+    hideQuestionModal();
+    
+    // Format answers and send to AI
+    let answerText = 'Here are my answers:\n\n';
+    currentQuestions.forEach((q, idx) => {
+        const answer = questionAnswers[idx];
+        let answerStr = answer;
+        if (Array.isArray(answer)) {
+            answerStr = answer.join(', ');
+        }
+        answerText += `${q.question}\nAnswer: ${answerStr}\n\n`;
+    });
+    
+    // Send answers back to continue bot building
+    const chat = getCurrentChat();
+    if (chat) {
+        chat.messages.push({ type: 'user', text: answerText });
+        addMessageToDOM(answerText, 'user');
+        saveChats();
+        
+        // Exit plan mode and generate code
+        chat.planMode = false;
+        document.querySelector('.strategy-pane')?.classList.remove('plan-mode');
+        document.querySelector('.builder-container')?.classList.remove('plan-mode');
+        
+        // Generate AI response to create the bot
+        generateAIResponse(chat, 'Please generate the complete bot code based on my answers above.').then(response => {
+            chat.messages.push({ type: 'assistant', text: response });
+            addMessageToDOM(response, 'assistant');
+            
+            const code = generateBotCode(answerText);
+            chat.code = code;
+            showCode(code);
+            
+            saveChats();
+            updateStatus('Ready', false);
+        });
+    }
+}
+
+// Parse questions from AI response
+function parseQuestionsFromResponse(response) {
+    try {
+        // Try to find JSON in the response
+        const jsonMatch = response.match(/\{[\s\S]*"questions"[\s\S]*\}/);
+        if (jsonMatch) {
+            const data = JSON.parse(jsonMatch[0]);
+            return data.questions || [];
+        }
+    } catch (e) {
+        console.error('Failed to parse questions:', e);
+    }
+    return null;
+}
