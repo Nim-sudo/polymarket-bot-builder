@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PolyBot Builder - Create Polymarket Trading Bots Without Code</title>
+    <meta name="description" content="Build, customize, and export Polymarket trading bots with our AI-powered platform. Chat-based interface meets powerful code generation. $30/month.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="32" height="32" rx="8" fill="url(#gradient)"/>
+                        <path d="M16 8L24 12V20L16 24L8 20V12L16 8Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 16L24 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 16V24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 16L8 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32">
+                                <stop offset="0%" stop-color="#00FFA3"/>
+                                <stop offset="100%" stop-color="#00B8D4"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span>PolyBot Builder</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How it Works</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#docs">Docs</a>
+                </div>
+                <div class="nav-actions">
+                    <a href="#" class="btn-secondary">Sign In</a>
+                    <a href="#pricing" class="btn-primary">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <div class="badge">AI-Powered Bot Builder</div>
+                    <h1>Build Polymarket Trading Bots in Minutes, Not Days</h1>
+                    <p class="hero-description">
+                        Design sophisticated prediction market trading bots through a simple chat interface.
+                        No coding experience required. Export and deploy anywhere.
+                    </p>
+                    <div class="hero-cta">
+                        <a href="#pricing" class="btn-primary btn-large">Start Building for $30/mo</a>
+                        <a href="#demo" class="btn-outline btn-large">Watch Demo</a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-value">500+</span>
+                            <span class="stat-label">Bots Created</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">$2M+</span>
+                            <span class="stat-label">Trading Volume</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">98%</span>
+                            <span class="stat-label">User Satisfaction</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="interface-preview">
+                        <div class="interface-header">
+                            <div class="header-tabs">
+                                <div class="tab active">Bot Builder</div>
+                                <div class="tab">Export</div>
+                            </div>
+                        </div>
+                        <div class="interface-body">
+                            <div class="pane chat-pane">
+                                <div class="pane-header">Chat</div>
+                                <div class="chat-messages">
+                                    <div class="message user">Create a bot that monitors Trump election markets</div>
+                                    <div class="message assistant">I'll help you build that bot. Let me set up the market monitoring and trading logic...</div>
+                                    <div class="message user">Add limit orders with 2% spread</div>
+                                    <div class="message assistant typing">Generating code...</div>
+                                </div>
+                            </div>
+                            <div class="pane code-pane">
+                                <div class="pane-header">Code</div>
+                                <div class="code-editor">
+                                    <pre><code><span class="keyword">import</span> { ClobClient } <span class="keyword">from</span> <span class="string">'@polymarket/clob-client'</span>;
+
+<span class="keyword">class</span> <span class="class-name">TrumpElectionBot</span> {
+  <span class="keyword">constructor</span>() {
+    <span class="keyword">this</span>.client = <span class="keyword">new</span> <span class="class-name">ClobClient</span>();
+    <span class="keyword">this</span>.spread = <span class="number">0.02</span>;
+  }
+
+  <span class="keyword">async</span> <span class="function">monitorMarket</span>() {
+    <span class="comment">// Market monitoring logic</span>
+  }
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Everything You Need to Build Trading Bots</h2>
+                <p>Powerful features designed for both beginners and experienced traders</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </div>
+                    <h3>Chat-Based Interface</h3>
+                    <p>Describe your trading strategy in plain English. Our AI translates your ideas into production-ready code.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="16 18 22 12 16 6"/>
+                            <polyline points="8 6 2 12 8 18"/>
+                        </svg>
+                    </div>
+                    <h3>Live Code Preview</h3>
+                    <p>Watch your bot come to life in real-time with our dual-pane interface. Chat on the left, code on the right.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                    </div>
+                    <h3>One-Click Export</h3>
+                    <p>Export your bot as a complete TypeScript or Python project. Deploy to any hosting provider or run locally.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <h3>Built-in Best Practices</h3>
+                    <p>Automatic rate limiting, order size validation, and error handling. We handle the complex parts.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <h3>Strategy Templates</h3>
+                    <p>Start with proven templates: arbitrage, market making, news-driven, and more. Customize to your needs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="3" y1="9" x2="21" y2="9"/>
+                            <line x1="9" y1="21" x2="9" y2="9"/>
+                        </svg>
+                    </div>
+                    <h3>Polymarket Integration</h3>
+                    <p>Full CLOB API integration with WebSocket support. Access real-time order books and market data.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>From Idea to Bot in 3 Steps</h2>
+                <p>Our streamlined process gets you trading faster</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <h3>Describe Your Strategy</h3>
+                        <p>Tell our AI what you want your bot to do. "Monitor election markets and place limit orders when spreads exceed 3%" - it's that simple.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="chat-bubble">
+                            <p>"Create a bot that arbitrages between similar markets"</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <h3>Review & Customize</h3>
+                        <p>Watch the code generate in real-time. Request changes, add features, or fine-tune parameters through natural conversation.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="code-preview-small">
+                            <code>async monitorMarket() { ... }</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <h3>Export & Deploy</h3>
+                        <p>Download your bot as a complete, documented project. Run it locally or deploy to the cloud. Coming soon: one-click hosting on our managed platform.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="export-button-demo">
+                            <button class="demo-export-btn">↓ Export Bot</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2>Simple, Transparent Pricing</h2>
+                <p>One plan with everything you need. No hidden fees.</p>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-badge">Launch Offer</div>
+                <div class="pricing-header">
+                    <h3>Builder Plan</h3>
+                    <div class="price">
+                        <span class="currency">$</span>
+                        <span class="amount">30</span>
+                        <span class="period">/month</span>
+                    </div>
+                </div>
+                <ul class="pricing-features">
+                    <li>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="10" fill="#00FFA3"/>
+                            <path d="M6 10l2.5 2.5L14 7" stroke="#0A0E14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Unlimited bot builds</span>
+                    </li>
+                    <li>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="10" fill="#00FFA3"/>
+                            <path d="M6 10l2.5 2.5L14 7" stroke="#0A0E14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Export to TypeScript or Python</span>
+                    </li>
+                    <li>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="10" fill="#00FFA3"/>
+                            <path d="M6 10l2.5 2.5L14 7" stroke="#0A0E14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>All strategy templates</span>
+                    </li>
+                    <li>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="10" fill="#00FFA3"/>
+                            <path d="M6 10l2.5 2.5L14 7" stroke="#0A0E14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Full Polymarket API integration</span>
+                    </li>
+                    <li>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="10" fill="#00FFA3"/>
+                            <path d="M6 10l2.5 2.5L14 7" stroke="#0A0E14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Rate limiting & safety features</span>
+                    </li>
+                    <li>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="10" fill="#00FFA3"/>
+                            <path d="M6 10l2.5 2.5L14 7" stroke="#0A0E14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Documentation & code comments</span>
+                    </li>
+                    <li>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="10" fill="#00FFA3"/>
+                            <path d="M6 10l2.5 2.5L14 7" stroke="#0A0E14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Email support</span>
+                    </li>
+                    <li class="coming-soon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="10" fill="#334155"/>
+                            <path d="M10 6v4l3 2" stroke="#64748b" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <span>Managed hosting platform <span class="badge-small">Coming Soon</span></span>
+                    </li>
+                </ul>
+                <a href="#" class="btn-primary btn-large btn-full">Start Building Now</a>
+                <p class="pricing-note">Cancel anytime. No long-term contracts.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Details -->
+    <section class="technical">
+        <div class="container">
+            <div class="section-header">
+                <h2>Built on Solid Foundations</h2>
+                <p>We handle the complexity so you can focus on strategy</p>
+            </div>
+            <div class="technical-grid">
+                <div class="technical-card">
+                    <h3>API Integration</h3>
+                    <ul>
+                        <li>Polymarket CLOB API (REST + WebSocket)</li>
+                        <li>Automatic authentication handling (L1/L2)</li>
+                        <li>Built-in rate limiting (100 req/min public, 60 orders/min trading)</li>
+                        <li>Official SDK support (@polymarket/clob-client, py-clob-client)</li>
+                    </ul>
+                </div>
+                <div class="technical-card">
+                    <h3>Trading Safeguards</h3>
+                    <ul>
+                        <li>Minimum order size validation</li>
+                        <li>Tick size conformance (dynamic 0.96/0.04 thresholds)</li>
+                        <li>Balance checking before orders</li>
+                        <li>Configurable position limits</li>
+                    </ul>
+                </div>
+                <div class="technical-card">
+                    <h3>Export Formats</h3>
+                    <ul>
+                        <li>TypeScript with full type definitions</li>
+                        <li>Python with async/await support</li>
+                        <li>Docker configuration included</li>
+                        <li>Environment variable templates</li>
+                    </ul>
+                </div>
+                <div class="technical-card">
+                    <h3>Coming Soon</h3>
+                    <ul>
+                        <li>Managed hosting platform (no-code deployment)</li>
+                        <li>Backtesting with historical data</li>
+                        <li>Portfolio management dashboard</li>
+                        <li>Multi-bot orchestration</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+            </div>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h3>Do I need coding experience?</h3>
+                    <p>No! That's the whole point. Describe your strategy in plain English, and we generate the code. However, having some technical knowledge helps when customizing advanced features.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Can I run bots on your platform?</h3>
+                    <p>Not yet. Currently, you build and export bots to run them yourself. We're building a managed hosting platform with a much friendlier UX that will launch soon.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>What are the Polymarket fees?</h3>
+                    <p>Polymarket currently charges 0% maker/taker fees on the CLOB, though standard trading fees (0.5-1%) apply to executed orders. Always check current fees on Polymarket's documentation.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>What trading limits exist?</h3>
+                    <p>Polymarket enforces minimum order sizes (varies by market), tick size constraints, and you're limited by your wallet balance. Rate limits: 100 requests/min (public) and 60 orders/min (trading).</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Can I customize the generated code?</h3>
+                    <p>Absolutely! Export the full source code and modify it however you want. It's your bot. We generate clean, well-documented code that's easy to understand and extend.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>What strategies can I build?</h3>
+                    <p>Anything: arbitrage bots, market makers, news-driven traders, limit order strategies, portfolio rebalancers, and more. We provide templates, but you can build custom logic for any strategy.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Build Your Trading Edge?</h2>
+                <p>Join hundreds of traders using AI to create sophisticated Polymarket bots.</p>
+                <a href="#pricing" class="btn-primary btn-large">Start Building for $30/month</a>
+                <p class="cta-note">No credit card required for demo</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="32" height="32" rx="8" fill="url(#gradient2)"/>
+                            <path d="M16 8L24 12V20L16 24L8 20V12L16 8Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16 16L24 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16 16V24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16 16L8 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <defs>
+                                <linearGradient id="gradient2" x1="0" y1="0" x2="32" y2="32">
+                                    <stop offset="0%" stop-color="#00FFA3"/>
+                                    <stop offset="100%" stop-color="#00B8D4"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <span>PolyBot Builder</span>
+                    </div>
+                    <p class="footer-description">Build sophisticated Polymarket trading bots without writing code.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#docs">Documentation</a></li>
+                        <li><a href="#examples">Examples</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#blog">Blog</a></li>
+                        <li><a href="#guides">Guides</a></li>
+                        <li><a href="#api">API Reference</a></li>
+                        <li><a href="#support">Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#terms">Terms of Service</a></li>
+                        <li><a href="#privacy">Privacy Policy</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Copyright 2026 PolyBot Builder. All Rights Reserved.</p>
+                <p class="disclaimer">Not affiliated with Polymarket. Trade at your own risk.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
