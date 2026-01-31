@@ -954,10 +954,48 @@
     text-align: center;
 }
 
-.trending-grid {
+.trending-carousel {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.trending-carousel-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.trending-slide {
+    min-width: 100%;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-dot:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.carousel-dot.active {
+    background: var(--accent-primary);
+    width: 24px;
+    border-radius: 4px;
 }
 
 .trending-market {
@@ -1008,6 +1046,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding: 24px;
+    padding-bottom: 100px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -1812,6 +1851,7 @@
     height: 20px;
     cursor: pointer;
     flex-shrink: 0;
+    pointer-events: none;
 }
 
 .question-option-content {

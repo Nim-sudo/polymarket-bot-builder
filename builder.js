@@ -890,6 +890,60 @@ function selectTrendingMarket(element) {
     document.getElementById('welcomeInput').focus();
 }
 
+// Trending Markets Carousel
+let currentSlide = 0;
+let carouselInterval = null;
+
+function goToSlide(index) {
+    const track = document.getElementById('trendingCarouselTrack');
+    const dots = document.querySelectorAll('.carousel-dot');
+
+    if (!track || !dots.length) return;
+
+    currentSlide = index;
+    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+    dots.forEach((dot, i) => {
+        if (i === currentSlide) {
+            dot.classList.add('active');
+        } else {
+            dot.classList.remove('active');
+        }
+    });
+}
+
+function nextSlide() {
+    const totalSlides = 3;
+    currentSlide = (currentSlide + 1) % totalSlides;
+    goToSlide(currentSlide);
+}
+
+function startCarousel() {
+    // Auto-advance every 5 seconds
+    carouselInterval = setInterval(nextSlide, 5000);
+}
+
+function stopCarousel() {
+    if (carouselInterval) {
+        clearInterval(carouselInterval);
+        carouselInterval = null;
+    }
+}
+
+// Initialize carousel on page load
+window.addEventListener('load', () => {
+    startCarousel();
+});
+
+// Pause on hover, resume on mouse leave
+document.addEventListener('DOMContentLoaded', () => {
+    const carousel = document.querySelector('.trending-carousel');
+    if (carousel) {
+        carousel.addEventListener('mouseenter', stopCarousel);
+        carousel.addEventListener('mouseleave', startCarousel);
+    }
+});
+
 // Market search functionality
 const mockMarkets = [
     { title: "Will Trump win 2024 election?", price: "0.54", volume: "$2.3M", liquidity: "High" },

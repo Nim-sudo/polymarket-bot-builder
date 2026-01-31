@@ -136,34 +136,106 @@
                         </div>
                         <div class="trending-markets">
                             <h3 class="trending-title">Trending Markets</h3>
-                            <div class="trending-grid">
-                                <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Will Trump win 2024?">
-                                    <div class="trending-market-title">Will Trump win 2024?</div>
-                                    <div class="trending-market-stats">
-                                        <span class="trending-price">54¢</span>
-                                        <span class="trending-volume">$2.3M vol</span>
+                            <div class="trending-carousel">
+                                <div class="trending-carousel-track" id="trendingCarouselTrack">
+                                    <!-- Slide 1 -->
+                                    <div class="trending-slide">
+                                        <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Will Trump win 2024?">
+                                            <div class="trending-market-title">Will Trump win 2024?</div>
+                                            <div class="trending-market-stats">
+                                                <span class="trending-price">54¢</span>
+                                                <span class="trending-volume">$2.3M vol</span>
+                                            </div>
+                                        </div>
+                                        <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Bitcoin above $100K by March?">
+                                            <div class="trending-market-title">Bitcoin above $100K by March?</div>
+                                            <div class="trending-market-stats">
+                                                <span class="trending-price">67¢</span>
+                                                <span class="trending-volume">$890K vol</span>
+                                            </div>
+                                        </div>
+                                        <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Fed rate cut in February?">
+                                            <div class="trending-market-title">Fed rate cut in February?</div>
+                                            <div class="trending-market-stats">
+                                                <span class="trending-price">12¢</span>
+                                                <span class="trending-volume">$456K vol</span>
+                                            </div>
+                                        </div>
+                                        <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="S&P 500 new ATH this month?">
+                                            <div class="trending-market-title">S&P 500 new ATH this month?</div>
+                                            <div class="trending-market-stats">
+                                                <span class="trending-price">78¢</span>
+                                                <span class="trending-volume">$623K vol</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Slide 2 -->
+                                    <div class="trending-slide">
+                                        <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="AI surpass human intelligence by 2030?">
+                                            <div class="trending-market-title">AI surpass human intelligence by 2030?</div>
+                                            <div class="trending-market-stats">
+                                                <span class="trending-price">42¢</span>
+                                                <span class="trending-volume">$1.2M vol</span>
+                                            </div>
+                                        </div>
+                                        <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Ethereum above $5K this year?">
+                                            <div class="trending-market-title">Ethereum above $5K this year?</div>
+                                            <div class="trending-market-stats">
+                                                <span class="trending-price">38¢</span>
+                                                <span class="trending-volume">$780K vol</span>
+                                            </div>
+                                        </div>
+                                        <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Recession declared in 2025?">
+                                            <div class="trending-market-title">Recession declared in 2025?</div>
+                                            <div class="trending-market-stats">
+                                                <span class="trending-price">28¢</span>
+                                                <span class="trending-volume">$945K vol</span>
+                                            </div>
+                                        </div>
+                                        <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Tesla stock above $300?">
+                                            <div class="trending-market-title">Tesla stock above $300?</div>
+                                            <div class="trending-market-stats">
+                                                <span class="trending-price">61¢</span>
+                                                <span class="trending-volume">$567K vol</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Slide 3 -->
+                                    <div class="trending-slide">
+                                        <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Apple releases AR glasses in 2025?">
+                                            <div class="trending-market-title">Apple releases AR glasses in 2025?</div>
+                                            <div class="trending-market-stats">
+                                                <span class="trending-price">19¢</span>
+                                                <span class="trending-volume">$432K vol</span>
+                                            </div>
+                                        </div>
+                                        <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Oil prices above $100/barrel?">
+                                            <div class="trending-market-title">Oil prices above $100/barrel?</div>
+                                            <div class="trending-market-stats">
+                                                <span class="trending-price">33¢</span>
+                                                <span class="trending-volume">$654K vol</span>
+                                            </div>
+                                        </div>
+                                        <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Major tech company IPO in Q1?">
+                                            <div class="trending-market-title">Major tech company IPO in Q1?</div>
+                                            <div class="trending-market-stats">
+                                                <span class="trending-price">47¢</span>
+                                                <span class="trending-volume">$389K vol</span>
+                                            </div>
+                                        </div>
+                                        <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Gold hits new all-time high?">
+                                            <div class="trending-market-title">Gold hits new all-time high?</div>
+                                            <div class="trending-market-stats">
+                                                <span class="trending-price">72¢</span>
+                                                <span class="trending-volume">$821K vol</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Bitcoin above $100K by March?">
-                                    <div class="trending-market-title">Bitcoin above $100K by March?</div>
-                                    <div class="trending-market-stats">
-                                        <span class="trending-price">67¢</span>
-                                        <span class="trending-volume">$890K vol</span>
-                                    </div>
-                                </div>
-                                <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Fed rate cut in February?">
-                                    <div class="trending-market-title">Fed rate cut in February?</div>
-                                    <div class="trending-market-stats">
-                                        <span class="trending-price">12¢</span>
-                                        <span class="trending-volume">$456K vol</span>
-                                    </div>
-                                </div>
-                                <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="S&P 500 new ATH this month?">
-                                    <div class="trending-market-title">S&P 500 new ATH this month?</div>
-                                    <div class="trending-market-stats">
-                                        <span class="trending-price">78¢</span>
-                                        <span class="trending-volume">$623K vol</span>
-                                    </div>
+                                <div class="carousel-dots" id="carouselDots">
+                                    <div class="carousel-dot active" onclick="goToSlide(0)"></div>
+                                    <div class="carousel-dot" onclick="goToSlide(1)"></div>
+                                    <div class="carousel-dot" onclick="goToSlide(2)"></div>
                                 </div>
                             </div>
                         </div>
