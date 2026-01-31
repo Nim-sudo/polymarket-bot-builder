@@ -260,9 +260,13 @@ function sendMessage() {
     if (chat.messages.length === 1) {
         chat.planMode = true;
         chat.planAnswers = 0;
-        // Dim right pane during plan mode
+        // Hide right pane during plan mode
         document.querySelector('.strategy-pane')?.classList.add('plan-mode');
+        document.querySelector('.builder-container')?.classList.add('plan-mode');
     }
+
+    // Show scroll button
+    showScrollButton();
 
     // Show generating status
     updateStatus(chat.planMode ? 'Planning strategy...' : 'Generating code...', true);
@@ -274,21 +278,35 @@ function sendMessage() {
         if (chat.planMode) {
             // In plan mode, ask clarifying questions
             if (chat.planAnswers === 0) {
-                response = `Great! I'll help you build that trading bot. To create the best strategy, I need to understand a few things:\n\n**1. Risk Management:** What's your maximum position size and daily loss limit you're comfortable with?`;
+                response = `Great! I'll help you build that trading bot. First, I need to know:\n\n**What market do you want to trade?** Please provide the market name or Polymarket link.`;
                 chat.planAnswers++;
             } else if (chat.planAnswers === 1) {
-                response = `Perfect! Next question:\n\n**2. Trading Frequency:** How often should the bot check for trading opportunities? (e.g., every 30 seconds, every minute, etc.)`;
+                // Check if user provided a link, if not, show preview
+                const hasLink = message.includes('polymarket.com');
+                if (hasLink) {
+                    response = `Perfect! I found that market. Let me show you a preview:\n\n📊 **Market Preview**\n• Current Price: 0.53\n• 24h Volume: $12.5K\n• Spread: 2%\n\nIs this the correct market? (Reply "yes" to continue or provide a different link)`;
+                } else {
+                    // Simulate finding the market
+                    response = `I found a market matching "${message}". Here's what I found:\n\n🔗 **Market Link:** https://polymarket.com/event/example-market\n\n📊 **Market Preview**\n• Current Price: 0.53\n• 24h Volume: $12.5K\n• Spread: 2%\n\nIs this the correct market? (Reply "yes" to continue)`;
+                }
                 chat.planAnswers++;
             } else if (chat.planAnswers === 2) {
-                response = `Great! Final question:\n\n**3. Execution:** What price should trigger your trades? Should it be based on market price, limit orders, or specific thresholds?`;
+                response = `Excellent! Now let's configure your strategy:\n\n**Risk Management:** What's your maximum position size and daily loss limit?`;
+                chat.planAnswers++;
+            } else if (chat.planAnswers === 3) {
+                response = `Perfect! Next:\n\n**Trading Frequency:** How often should the bot check for opportunities? (e.g., every 30 seconds, every minute)`;
+                chat.planAnswers++;
+            } else if (chat.planAnswers === 4) {
+                response = `Great! Final question:\n\n**Execution:** What price should trigger your trades? (market price, limit orders, or specific thresholds)`;
                 chat.planAnswers++;
             } else {
                 // Exit plan mode and generate code
                 chat.planMode = false;
                 // Restore right pane
                 document.querySelector('.strategy-pane')?.classList.remove('plan-mode');
+                document.querySelector('.builder-container')?.classList.remove('plan-mode');
 
-                response = `Excellent! I now have all the information I need. Let me generate your custom trading bot...\n\n✅ Strategy configured\n✅ Risk parameters set\n✅ Trading logic defined\n\nYour bot code is ready! Check the Code tab on the right to review the implementation. You can export it when you're ready.`;
+                response = `Excellent! I now have all the information I need. Let me generate your custom trading bot...\n\n✅ Market configured\n✅ Strategy defined\n✅ Risk parameters set\n✅ Trading logic implemented\n\nYour bot code is ready! Check the Code tab on the right to review the implementation. You can export it when you're ready.`;
 
                 const code = generateBotCode(message);
                 chat.code = code;
@@ -699,6 +717,38 @@ function useWelcomeExample(button) {
     const text = button.textContent;
     document.getElementById('welcomeInput').value = text;
     document.getElementById('welcomeInput').focus();
+}
+
+// Scroll to bottom functionality
+function scrollChatToBottom() {
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        hideScrollButton();
+    }
+}
+
+function showScrollButton() {
+    const scrollBtn = document.getElementById('scrollToBottom');
+    if (scrollBtn) scrollBtn.style.display = 'flex';
+}
+
+function hideScrollButton() {
+    const scrollBtn = document.getElementById('scrollToBottom');
+    if (scrollBtn) scrollBtn.style.display = 'none';
+}
+
+// Check if user has scrolled up
+document.getElementById('chatMessages')?.addEventListener('scroll', function() {
+    const isAtBottom = this.scrollHeight - this.scrollTop <= this.clientHeight + 50;
+    if (isAtBottom) {
+        hideScrollButton();
+    }
+});
+
+// Run quick guide function
+function runQuickGuide() {
+    alert('Quick Guide:\n\n1. Describe your trading strategy\n2. Answer the setup questions\n3. Review generated code\n4. Export your bot\n5. Deploy and monitor\n\nNeed help? Check the documentation or contact support.');
 }
 
 // Initialize recommendations on load

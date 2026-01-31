@@ -141,22 +141,29 @@
                 <div class="chat-messages" id="chatMessages">
                     <!-- Messages will be added here dynamically -->
                 </div>
+                <button class="scroll-to-bottom" id="scrollToBottom" onclick="scrollChatToBottom()" style="display: none;">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 4v12M4 10l6 6 6-6"/>
+                    </svg>
+                </button>
                 <div class="recommended-messages" id="recommendedMessages">
                     <!-- Dynamic recommended messages will appear here -->
                 </div>
                 <div class="chat-input-container">
-                    <button class="btn-attach" title="Attach file">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M10 3v14M3 10h14"/>
-                        </svg>
-                    </button>
-                    <textarea
-                        id="chatInput"
-                        placeholder="Ask PolyBot Builder..."
-                        rows="1"
-                        onkeydown="handleChatKeydown(event)"
-                        oninput="autoResizeTextarea(this)"
-                    ></textarea>
+                    <div class="chat-input-wrapper">
+                        <button class="btn-attach" title="Attach file">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10 3v14M3 10h14"/>
+                            </svg>
+                        </button>
+                        <textarea
+                            id="chatInput"
+                            placeholder="Ask PolyBot Builder..."
+                            rows="1"
+                            onkeydown="handleChatKeydown(event)"
+                            oninput="autoResizeTextarea(this)"
+                        ></textarea>
+                    </div>
                     <button class="btn-send" onclick="sendMessage()" id="sendButton">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M2 10l16-8-8 16-2-6-6-2z"/>
@@ -305,6 +312,9 @@
                 <div class="tab-content" id="codeTab">
                     <div class="strategy-content">
                         <div class="code-header-actions">
+                            <button class="btn-quick-guide" onclick="runQuickGuide()">
+                                Run quick guide →
+                            </button>
                             <button class="btn-icon" onclick="copyCode()" title="Copy code">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                                     <rect x="5" y="5" width="9" height="9" rx="1"/>
