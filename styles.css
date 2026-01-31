@@ -211,6 +211,7 @@ body {
     gap: 12px;
     flex-wrap: wrap;
     margin-top: 16px;
+    margin-bottom: 32px;
 }
 
 .security-badge {

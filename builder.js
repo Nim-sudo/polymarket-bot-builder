@@ -887,12 +887,17 @@ function runQuickGuide() {
 function selectTrendingMarket(element) {
     const marketName = element.getAttribute('data-market');
     const input = document.getElementById('welcomeInput');
-    input.value = marketName;
+    input.value = marketName + ' - ';
+    input.placeholder = 'Describe the type of bot you want to build...';
     input.focus();
+    // Move cursor to end
+    setTimeout(() => {
+        input.setSelectionRange(input.value.length, input.value.length);
+    }, 0);
 }
 
-// Polymarket Gamma API Integration
-const GAMMA_API_BASE = 'https://gamma-api.polymarket.com';
+// Polymarket Gamma API Integration (via CORS proxy)
+const GAMMA_API_PROXY = '/api/polymarket';
 let searchTimeout = null;
 
 async function searchWelcomeMarkets(query) {
@@ -934,7 +939,7 @@ function extractSlugFromUrl(url) {
 }
 
 async function searchBySlug(slug, dropdown) {
-    const response = await fetch(`${GAMMA_API_BASE}/events?slug=${slug}`);
+    const response = await fetch(`${GAMMA_API_PROXY}?path=/events&slug=${slug}`);
     const data = await response.json();
 
     if (data && data.length > 0) {
@@ -947,7 +952,7 @@ async function searchBySlug(slug, dropdown) {
 
 async function searchByKeyword(query, dropdown) {
     // Search active markets
-    const response = await fetch(`${GAMMA_API_BASE}/markets?limit=10&active=true&closed=false`);
+    const response = await fetch(`${GAMMA_API_PROXY}?path=/markets&limit=10&active=true&closed=false`);
     const data = await response.json();
 
     if (!data || data.length === 0) {
@@ -1032,8 +1037,14 @@ function selectMarket(marketName, marketId) {
     dropdown.innerHTML = '';
 
     const input = document.getElementById('welcomeInput');
-    input.value = marketName;
+    input.value = marketName + ' - ';
+    input.placeholder = 'Describe the type of bot you want to build...';
     input.focus();
+
+    // Move cursor to end
+    setTimeout(() => {
+        input.setSelectionRange(input.value.length, input.value.length);
+    }, 0);
 
     // Don't auto-submit - let user add their description first
 }
@@ -1406,18 +1417,53 @@ function renderQuestion() {
 
     body.innerHTML = html;
 
-    // Attach click event listeners to option labels
+    // Attach change event listeners to the actual input elements
+    const radioInputs = body.querySelectorAll('input[type="radio"]');
+    radioInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const questionIdx = currentQuestionIndex;
+            const value = this.value;
+            questionAnswers[questionIdx] = value;
+            renderQuestion();
+        });
+    });
+
+    const checkboxInputs = body.querySelectorAll('input[type="checkbox"]');
+    checkboxInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const questionIdx = currentQuestionIndex;
+            const value = this.value;
+            if (!questionAnswers[questionIdx]) {
+                questionAnswers[questionIdx] = [];
+            }
+            const answers = questionAnswers[questionIdx];
+            if (this.checked) {
+                if (!answers.includes(value)) {
+                    answers.push(value);
+                }
+            } else {
+                const idx = answers.indexOf(value);
+                if (idx > -1) {
+                    answers.splice(idx, 1);
+                }
+            }
+            renderQuestion();
+        });
+    });
+
+    // Also add click listeners to labels to make the whole card clickable
     const options = body.querySelectorAll('.question-option');
     options.forEach(option => {
         option.addEventListener('click', function(e) {
-            const questionIdx = parseInt(this.getAttribute('data-question-idx'));
-            const optionValue = this.getAttribute('data-option-value');
-            const questionType = this.getAttribute('data-question-type');
+            // Only handle clicks on the label itself, not on the input
+            if (e.target.tagName === 'INPUT') {
+                return; // Let the input handle it
+            }
 
-            if (questionType === 'single') {
-                selectOption(questionIdx, optionValue, 'single');
-            } else if (questionType === 'multiple') {
-                toggleOption(questionIdx, optionValue);
+            // Find the input inside this label and trigger it
+            const input = this.querySelector('input');
+            if (input) {
+                input.click();
             }
         });
     });
