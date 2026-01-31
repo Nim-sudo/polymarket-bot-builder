@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Builder - PolyBot Builder</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="builder.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="builder-page">
+    <!-- Top Bar -->
+    <div class="builder-topbar">
+        <div class="topbar-left">
+            <div class="logo-small">
+                <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="32" height="32" rx="8" fill="url(#gradient)"/>
+                    <path d="M16 8L24 12V20L16 24L8 20V12L16 8Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 16L24 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 16V24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 16L8 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs>
+                        <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32">
+                            <stop offset="0%" stop-color="#00FFA3"/>
+                            <stop offset="100%" stop-color="#00B8D4"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span>PolyBot Builder</span>
+            </div>
+            <div class="bot-name">
+                <input type="text" id="botName" placeholder="Untitled Bot" />
+            </div>
+        </div>
+        <div class="topbar-right">
+            <button class="btn-secondary btn-small" onclick="saveDraft()">Save Draft</button>
+            <button class="btn-primary btn-small" onclick="exportBot()">Export Bot</button>
+            <button class="btn-icon" onclick="showMenu()">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                    <circle cx="10" cy="10" r="1" fill="currentColor"/>
+                    <circle cx="10" cy="5" r="1" fill="currentColor"/>
+                    <circle cx="10" cy="15" r="1" fill="currentColor"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Builder Interface -->
+    <div class="builder-container">
+        <!-- Left Pane: Chat -->
+        <div class="builder-pane chat-pane">
+            <div class="pane-header">
+                <h3>Chat</h3>
+                <span class="pane-subtitle">Describe your trading strategy</span>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message assistant">
+                    <div class="message-content">
+                        <p>Hi! I'll help you build your Polymarket trading bot.</p>
+                        <p>Tell me what kind of bot you want to create. For example:</p>
+                        <ul>
+                            <li>"Create an arbitrage bot that monitors similar markets"</li>
+                            <li>"Build a market maker with 2% spread"</li>
+                            <li>"Make a news-driven bot for election markets"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <textarea
+                    id="chatInput"
+                    placeholder="Describe your trading strategy..."
+                    rows="3"
+                    onkeydown="handleChatKeydown(event)"
+                ></textarea>
+                <button class="btn-send" onclick="sendMessage()">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 10l16-8-8 16-2-6-6-2z"/>
+                    </svg>
+                    Send
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Pane: Code -->
+        <div class="builder-pane code-pane">
+            <div class="pane-header">
+                <div class="header-tabs">
+                    <button class="tab active" onclick="switchTab('code')">Code</button>
+                    <button class="tab" onclick="switchTab('preview')">Preview</button>
+                    <button class="tab" onclick="switchTab('config')">Config</button>
+                </div>
+                <div class="code-actions">
+                    <button class="btn-text" onclick="copyCode()">Copy</button>
+                    <select class="language-select" onchange="changeLanguage(this.value)">
+                        <option value="typescript">TypeScript</option>
+                        <option value="python">Python</option>
+                    </select>
+                </div>
+            </div>
+            <div class="code-content" id="codeContent">
+                <div class="code-editor">
+                    <pre><code id="codeBlock"><span class="comment">// Your bot code will appear here as you describe your strategy in the chat</span>
+
+<span class="comment">// Start by telling me what kind of bot you want to build!</span></code></pre>
+                </div>
+            </div>
+            <div class="code-status">
+                <span class="status-indicator"></span>
+                <span class="status-text">Ready</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay" onclick="hideMenu()">
+        <div class="menu-dropdown" onclick="event.stopPropagation()">
+            <div class="menu-item" onclick="newBot()">
+                <span>New Bot</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='dashboard.html'">
+                <span>Dashboard</span>
+            </div>
+            <div class="menu-divider"></div>
+            <div class="menu-item" onclick="showTemplates()">
+                <span>Browse Templates</span>
+            </div>
+            <div class="menu-item" onclick="window.open('README.md', '_blank')">
+                <span>Documentation</span>
+            </div>
+            <div class="menu-divider"></div>
+            <div class="menu-item" onclick="logout()">
+                <span>Sign Out</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="builder.js"></script>
+</body>
+</html>

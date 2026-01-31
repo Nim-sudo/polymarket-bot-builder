@@ -3,14 +3,14 @@ function signIn(event) {
     event.preventDefault();
     // For now, simple fake authentication
     localStorage.setItem('isLoggedIn', 'true');
-    window.location.href = 'dashboard.html';
+    window.location.href = 'builder.html';
 }
 
 function getStarted(event) {
     event.preventDefault();
-    // For now, redirect to dashboard (will add proper signup later)
+    // For now, redirect to builder (will add proper signup later)
     localStorage.setItem('isLoggedIn', 'true');
-    window.location.href = 'dashboard.html';
+    window.location.href = 'builder.html';
 }
 
 // FAQ toggle function
