@@ -14,7 +14,7 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <button class="logo-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
+            <button class="sidebar-logo" title="PolyBot Builder">
                 <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="32" height="32" rx="8" fill="url(#gradient)"/>
                     <path d="M16 8L24 12V20L16 24L8 20V12L16 8Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -28,16 +28,28 @@
                         </linearGradient>
                     </defs>
                 </svg>
-                <svg class="sidebar-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+            </button>
+            <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Toggle sidebar">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="3" width="6" height="14" rx="1"/>
                     <path d="M10 6h7M10 10h7M10 14h7"/>
                 </svg>
             </button>
-            <button class="btn-new-chat" onclick="newChat()">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M8 3v10M3 8h10"/>
+        </div>
+
+        <div class="sidebar-actions">
+            <button class="sidebar-action-item" onclick="newChat()" title="New chat">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 10h12M10 4v12"/>
                 </svg>
-                New Chat
+                <span class="sidebar-label">New chat</span>
+            </button>
+            <button class="sidebar-action-item" onclick="searchChats()" title="Search chats">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="9" cy="9" r="6"/>
+                    <path d="M13.5 13.5l4 4"/>
+                </svg>
+                <span class="sidebar-label">Search chats</span>
             </button>
         </div>
 
@@ -46,12 +58,19 @@
         </div>
 
         <div class="sidebar-footer">
-            <button class="sidebar-menu-item" onclick="openAccount()">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <circle cx="8" cy="5" r="3"/>
-                    <path d="M2 14a6 6 0 0112 0"/>
+            <button class="sidebar-menu-item" onclick="openSettings()">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="10" cy="10" r="3"/>
+                    <path d="M10 1v2M10 17v2M19 10h-2M3 10H1M16.5 16.5l-1.4-1.4M4.9 4.9L3.5 3.5M16.5 3.5l-1.4 1.4M4.9 15.1l-1.4 1.4"/>
                 </svg>
-                Account
+                <span class="sidebar-label">Settings</span>
+            </button>
+            <button class="sidebar-menu-item" onclick="openAccount()">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="10" cy="6" r="4"/>
+                    <path d="M2 18a8 8 0 0116 0"/>
+                </svg>
+                <span class="sidebar-label">Account</span>
             </button>
         </div>
     </div>

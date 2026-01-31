@@ -19,7 +19,15 @@ window.addEventListener('load', () => {
 // Sidebar functions
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('collapsed');
+    sidebar.classList.toggle('expanded');
+}
+
+function searchChats() {
+    alert('Search feature coming soon! You\'ll be able to search through all your chat history.');
+}
+
+function openSettings() {
+    alert('Settings coming soon! Here you\'ll manage:\n- Theme preferences\n- Notification settings\n- Export options\n- API preferences');
 }
 
 function newChat() {
