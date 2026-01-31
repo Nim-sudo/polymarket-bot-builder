@@ -886,8 +886,9 @@ function runQuickGuide() {
 // Trending market selection
 function selectTrendingMarket(element) {
     const marketName = element.getAttribute('data-market');
-    document.getElementById('welcomeInput').value = `Build a trading bot for: ${marketName}`;
-    document.getElementById('welcomeInput').focus();
+    const input = document.getElementById('welcomeInput');
+    input.value = marketName;
+    input.focus();
 }
 
 // Polymarket Gamma API Integration
@@ -1030,8 +1031,11 @@ function selectMarket(marketName, marketId) {
     dropdown.classList.remove('visible');
     dropdown.innerHTML = '';
 
-    document.getElementById('welcomeInput').value = `Build a trading bot for: ${marketName}`;
-    sendFromWelcome();
+    const input = document.getElementById('welcomeInput');
+    input.value = marketName;
+    input.focus();
+
+    // Don't auto-submit - let user add their description first
 }
 
 // Trending Markets Carousel
@@ -1351,20 +1355,20 @@ function hideQuestionModal() {
 function renderQuestion() {
     const question = currentQuestions[currentQuestionIndex];
     const body = document.getElementById('questionModalBody');
-    
-    let html = `<div class="question-title">${question.question}</div>`;
-    
+
+    let html = `<div class="question-title">${escapeHtml(question.question)}</div>`;
+
     if (question.type === 'single') {
         // Radio buttons
         question.options.forEach((option, idx) => {
             const checked = questionAnswers[currentQuestionIndex] === option.label ? 'checked' : '';
             const selected = checked ? 'selected' : '';
             html += `
-                <label class="question-option ${selected}" onclick="selectOption(${currentQuestionIndex}, '${option.label.replace(/'/g, "\'")}', 'single')">
-                    <input type="radio" name="q${currentQuestionIndex}" value="${option.label}" ${checked}>
+                <label class="question-option ${selected}" data-question-idx="${currentQuestionIndex}" data-option-value="${escapeHtml(option.label)}" data-question-type="single">
+                    <input type="radio" name="q${currentQuestionIndex}" value="${escapeHtml(option.label)}" ${checked}>
                     <div class="question-option-content">
-                        <span class="question-option-label">${option.label}</span>
-                        <span class="question-option-description">${option.description}</span>
+                        <span class="question-option-label">${escapeHtml(option.label)}</span>
+                        <span class="question-option-description">${escapeHtml(option.description)}</span>
                     </div>
                 </label>
             `;
@@ -1376,11 +1380,11 @@ function renderQuestion() {
             const checked = answers.includes(option.label) ? 'checked' : '';
             const selected = checked ? 'selected' : '';
             html += `
-                <label class="question-option ${selected}" onclick="toggleOption(${currentQuestionIndex}, '${option.label.replace(/'/g, "\'")}')">
-                    <input type="checkbox" value="${option.label}" ${checked}>
+                <label class="question-option ${selected}" data-question-idx="${currentQuestionIndex}" data-option-value="${escapeHtml(option.label)}" data-question-type="multiple">
+                    <input type="checkbox" value="${escapeHtml(option.label)}" ${checked}>
                     <div class="question-option-content">
-                        <span class="question-option-label">${option.label}</span>
-                        <span class="question-option-description">${option.description}</span>
+                        <span class="question-option-label">${escapeHtml(option.label)}</span>
+                        <span class="question-option-description">${escapeHtml(option.description)}</span>
                     </div>
                 </label>
             `;
@@ -1389,18 +1393,35 @@ function renderQuestion() {
         // Text input
         const value = questionAnswers[currentQuestionIndex] || '';
         html += `
-            <input 
-                type="${question.type}" 
-                class="question-text-input" 
+            <input
+                type="${question.type}"
+                class="question-text-input"
                 id="textInput${currentQuestionIndex}"
                 placeholder="${question.placeholder || 'Enter your answer'}"
-                value="${value}"
+                value="${escapeHtml(value)}"
                 oninput="updateTextAnswer(${currentQuestionIndex}, this.value)"
             />
         `;
     }
-    
+
     body.innerHTML = html;
+
+    // Attach click event listeners to option labels
+    const options = body.querySelectorAll('.question-option');
+    options.forEach(option => {
+        option.addEventListener('click', function(e) {
+            const questionIdx = parseInt(this.getAttribute('data-question-idx'));
+            const optionValue = this.getAttribute('data-option-value');
+            const questionType = this.getAttribute('data-question-type');
+
+            if (questionType === 'single') {
+                selectOption(questionIdx, optionValue, 'single');
+            } else if (questionType === 'multiple') {
+                toggleOption(questionIdx, optionValue);
+            }
+        });
+    });
+
     updateProgress();
     updateButtons();
 }

@@ -1080,7 +1080,6 @@
 
 .trending-carousel {
     position: relative;
-    overflow: hidden;
     width: 100%;
     padding: 0 60px;
 }
@@ -1088,6 +1087,8 @@
 .trending-carousel-track {
     display: flex;
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    position: relative;
 }
 
 .trending-slide {
@@ -1125,11 +1126,11 @@
 }
 
 .carousel-arrow-left {
-    left: -50px;
+    left: 10px;
 }
 
 .carousel-arrow-right {
-    right: -50px;
+    right: 10px;
 }
 
 .carousel-dots {
