@@ -113,10 +113,18 @@
                         </div>
                     </div>
                 </div>
+                <div class="recommended-messages" id="recommendedMessages">
+                    <!-- Dynamic recommended messages will appear here -->
+                </div>
                 <div class="chat-input-container">
+                    <button class="btn-attach" title="Attach file">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 3v14M3 10h14"/>
+                        </svg>
+                    </button>
                     <textarea
                         id="chatInput"
-                        placeholder="Describe your trading strategy..."
+                        placeholder="Ask PolyBot Builder..."
                         rows="1"
                         onkeydown="handleChatKeydown(event)"
                         oninput="autoResizeTextarea(this)"

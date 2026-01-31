@@ -558,3 +558,60 @@ function switchRightTab(tabName) {
         document.getElementById('codeTab').classList.add('active');
     }
 }
+
+// Recommended messages functionality
+function updateRecommendedMessages() {
+    const container = document.getElementById('recommendedMessages');
+    if (!container) return;
+
+    const chat = getCurrentChat();
+    if (!chat || chat.messages.length === 0) {
+        // Show initial recommendations
+        const initialRecommendations = [
+            "Create an arbitrage bot",
+            "Build a market maker with 2% spread",
+            "Make a news-driven bot",
+            "Set up a momentum trading strategy"
+        ];
+        container.innerHTML = initialRecommendations.map(text => 
+            `<span class="recommended-chip" onclick="useRecommendation('${text}')">${text}</span>`
+        ).join('');
+    } else {
+        // Context-based recommendations
+        const lastMessage = chat.messages[chat.messages.length - 1];
+        if (lastMessage.type === 'assistant') {
+            const contextualRecommendations = [
+                "Adjust the risk parameters",
+                "Add more entry rules",
+                "Set up exit conditions",
+                "Configure position sizing"
+            ];
+            container.innerHTML = contextualRecommendations.map(text => 
+                `<span class="recommended-chip" onclick="useRecommendation('${text}')">${text}</span>`
+            ).join('');
+        }
+    }
+}
+
+function useRecommendation(text) {
+    document.getElementById('chatInput').value = text;
+    document.getElementById('chatInput').focus();
+}
+
+// Update recommendations when chat changes
+const originalSendMessage = sendMessage;
+sendMessage = function() {
+    originalSendMessage();
+    setTimeout(updateRecommendedMessages, 100);
+};
+
+const originalSwitchChat = switchChat;
+switchChat = function(chatId) {
+    originalSwitchChat(chatId);
+    updateRecommendedMessages();
+};
+
+// Initialize recommendations on load
+window.addEventListener('load', () => {
+    setTimeout(updateRecommendedMessages, 500);
+});

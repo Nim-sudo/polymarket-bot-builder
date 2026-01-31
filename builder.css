@@ -332,6 +332,7 @@
 
 .chat-pane {
     border-right: 1px solid var(--border-color);
+    overflow: hidden;
 }
 
 .strategy-pane {
@@ -708,10 +709,12 @@
 .chat-messages {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 24px;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    min-height: 0;
 }
 
 /* Welcome Message */
@@ -826,16 +829,71 @@
     color: var(--text-secondary);
 }
 
+/* Recommended Messages */
+.recommended-messages {
+    padding: 12px 24px;
+    background: var(--bg-secondary);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-height: 48px;
+    align-items: center;
+}
+
+.recommended-messages:empty {
+    display: none;
+}
+
+.recommended-chip {
+    padding: 8px 14px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    font-size: 13px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.recommended-chip:hover {
+    background: var(--bg-card);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
 /* Chat Input */
 .chat-input-container {
-    padding: 20px 24px;
+    padding: 16px 24px;
     border-top: 1px solid var(--border-color);
     background: var(--bg-secondary);
     display: flex;
     align-items: flex-end;
     gap: 12px;
     flex-shrink: 0;
-    min-height: 84px;
+    min-height: 72px;
+}
+
+.btn-attach {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.btn-attach:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
 }
 
 #chatInput {
@@ -843,13 +901,13 @@
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
     color: var(--text-primary);
-    padding: 12px 16px;
-    border-radius: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
     font-size: 14px;
     line-height: 1.5;
     resize: none;
-    max-height: 200px;
-    min-height: 44px;
+    max-height: 150px;
+    min-height: 36px;
     font-family: inherit;
 }
 
@@ -859,13 +917,13 @@
 }
 
 .btn-send {
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
     padding: 0;
     background: var(--accent-primary);
     color: var(--bg-primary);
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
