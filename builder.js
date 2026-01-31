@@ -263,6 +263,8 @@ function sendMessage() {
         // Hide right pane during plan mode
         document.querySelector('.strategy-pane')?.classList.add('plan-mode');
         document.querySelector('.builder-container')?.classList.add('plan-mode');
+        // Show market search for first question
+        showMarketSearch();
     }
 
     // Show scroll button
@@ -305,6 +307,8 @@ function sendMessage() {
                 // Restore right pane
                 document.querySelector('.strategy-pane')?.classList.remove('plan-mode');
                 document.querySelector('.builder-container')?.classList.remove('plan-mode');
+                // Hide market search if still visible
+                hideMarketSearch();
 
                 response = `Excellent! I now have all the information I need. Let me generate your custom trading bot...\n\n✅ Market configured\n✅ Strategy defined\n✅ Risk parameters set\n✅ Trading logic implemented\n\nYour bot code is ready! Check the Code tab on the right to review the implementation. You can export it when you're ready.`;
 
@@ -738,25 +742,124 @@ function scrollChatToBottom() {
 
 function showScrollButton() {
     const scrollBtn = document.getElementById('scrollToBottom');
-    if (scrollBtn) scrollBtn.style.display = 'flex';
+    if (scrollBtn) {
+        scrollBtn.style.display = 'flex';
+        setTimeout(() => scrollBtn.classList.add('visible'), 10);
+    }
 }
 
 function hideScrollButton() {
     const scrollBtn = document.getElementById('scrollToBottom');
-    if (scrollBtn) scrollBtn.style.display = 'none';
+    if (scrollBtn) {
+        scrollBtn.classList.remove('visible');
+        setTimeout(() => scrollBtn.style.display = 'none', 200);
+    }
 }
 
 // Check if user has scrolled up
 document.getElementById('chatMessages')?.addEventListener('scroll', function() {
     const isAtBottom = this.scrollHeight - this.scrollTop <= this.clientHeight + 50;
+    const scrollBtn = document.getElementById('scrollToBottom');
+
     if (isAtBottom) {
-        hideScrollButton();
+        if (scrollBtn) {
+            scrollBtn.classList.remove('visible');
+            setTimeout(() => scrollBtn.style.display = 'none', 200);
+        }
+    } else {
+        if (scrollBtn) {
+            scrollBtn.style.display = 'flex';
+            setTimeout(() => scrollBtn.classList.add('visible'), 10);
+        }
     }
 });
 
 // Run quick guide function
 function runQuickGuide() {
     alert('Quick Guide:\n\n1. Describe your trading strategy\n2. Answer the setup questions\n3. Review generated code\n4. Export your bot\n5. Deploy and monitor\n\nNeed help? Check the documentation or contact support.');
+}
+
+// Trending market selection
+function selectTrendingMarket(element) {
+    const marketName = element.getAttribute('data-market');
+    document.getElementById('welcomeInput').value = `Build a trading bot for: ${marketName}`;
+    document.getElementById('welcomeInput').focus();
+}
+
+// Market search functionality
+const mockMarkets = [
+    { title: "Will Trump win 2024 election?", price: "0.54", volume: "$2.3M", liquidity: "High" },
+    { title: "Bitcoin above $100K by March 2026?", price: "0.67", volume: "$890K", liquidity: "Medium" },
+    { title: "Fed rate cut in February 2026?", price: "0.12", volume: "$456K", liquidity: "Medium" },
+    { title: "S&P 500 new ATH this month?", price: "0.78", volume: "$623K", liquidity: "High" },
+    { title: "Ethereum above $5K by April?", price: "0.43", volume: "$334K", liquidity: "Medium" },
+    { title: "Tesla stock above $300 by June?", price: "0.38", volume: "$278K", liquidity: "Low" },
+    { title: "Recession in 2026?", price: "0.23", volume: "$1.1M", liquidity: "High" },
+    { title: "Apple releases AI product in Q1?", price: "0.65", volume: "$445K", liquidity: "Medium" }
+];
+
+function showMarketSearch() {
+    const container = document.getElementById('marketSearchContainer');
+    const recommendedMessages = document.getElementById('recommendedMessages');
+    if (container) {
+        container.style.display = 'block';
+        // Populate with initial suggestions
+        searchMarkets('');
+    }
+    if (recommendedMessages) {
+        recommendedMessages.style.display = 'none';
+    }
+}
+
+function hideMarketSearch() {
+    const container = document.getElementById('marketSearchContainer');
+    const recommendedMessages = document.getElementById('recommendedMessages');
+    if (container) container.style.display = 'none';
+    if (recommendedMessages) recommendedMessages.style.display = 'flex';
+}
+
+function searchMarkets(query) {
+    const dropdown = document.getElementById('marketDropdown');
+    if (!dropdown) return;
+
+    const filtered = query.trim() === ''
+        ? mockMarkets.slice(0, 5)
+        : mockMarkets.filter(m => m.title.toLowerCase().includes(query.toLowerCase()));
+
+    if (filtered.length === 0) {
+        dropdown.innerHTML = '<div class="market-dropdown-item" style="cursor: default;"><div class="market-item-title">No markets found</div></div>';
+        dropdown.classList.add('visible');
+        return;
+    }
+
+    dropdown.innerHTML = filtered.map(market => `
+        <div class="market-dropdown-item" onclick="selectMarket('${market.title.replace(/'/g, "\\'")}', '${market.price}', '${market.volume}')">
+            <div class="market-item-title">${market.title}</div>
+            <div class="market-item-stats">
+                <span class="market-item-price">${market.price}</span>
+                <span>Vol: ${market.volume}</span>
+                <span>Liq: ${market.liquidity}</span>
+            </div>
+        </div>
+    `).join('');
+
+    dropdown.classList.add('visible');
+}
+
+function selectMarket(title, price, volume) {
+    const input = document.getElementById('marketSearchInput');
+    const chatInput = document.getElementById('chatInput');
+
+    if (input) input.value = title;
+    if (chatInput) chatInput.value = title;
+
+    // Hide dropdown
+    const dropdown = document.getElementById('marketDropdown');
+    if (dropdown) dropdown.classList.remove('visible');
+
+    // Hide market search and send message
+    hideMarketSearch();
+    setTimeout(() => sendMessage(), 100);
 }
 
 // Initialize recommendations on load
