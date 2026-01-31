@@ -440,13 +440,51 @@ function exportBot() {
     alert(`Exporting "${botName}"...\n\nYour bot will be downloaded as a complete project with:\n- TypeScript source code\n- Environment template\n- README and documentation\n- Docker configuration\n\n(Full export feature coming soon)`);
 }
 
-function openSettings() {
-    alert('Settings coming soon! Here you\'ll manage:\n- API credentials\n- Notification preferences\n- Export options\n- Account settings');
+function openAccount() {
+    alert('Account settings coming soon! Here you\'ll manage:\n- Profile information\n- API credentials\n- Notification preferences\n- Subscription and billing\n- Security settings\n- Sign out');
 }
 
 function logout() {
     localStorage.removeItem('isLoggedIn');
     window.location.href = 'index.html';
+}
+
+// Autosave functionality
+let autosaveEnabled = localStorage.getItem('autosaveEnabled') !== 'false';
+let autosaveInterval = null;
+
+function toggleAutosave(enabled) {
+    autosaveEnabled = enabled;
+    localStorage.setItem('autosaveEnabled', enabled);
+
+    if (enabled) {
+        startAutosave();
+    } else {
+        stopAutosave();
+    }
+}
+
+function startAutosave() {
+    if (autosaveInterval) return;
+
+    autosaveInterval = setInterval(() => {
+        if (currentChatId && autosaveEnabled) {
+            saveChats();
+            console.log('Autosaved');
+        }
+    }, 30000); // Autosave every 30 seconds
+}
+
+function stopAutosave() {
+    if (autosaveInterval) {
+        clearInterval(autosaveInterval);
+        autosaveInterval = null;
+    }
+}
+
+// Initialize autosave on load
+if (autosaveEnabled) {
+    startAutosave();
 }
 
 // Code panel functions
@@ -468,11 +506,14 @@ function copyCode() {
     }
 
     navigator.clipboard.writeText(code);
-    alert('Code copied to clipboard!');
-}
 
-function changeLanguage(lang) {
-    alert(`${lang === 'python' ? 'Python' : 'TypeScript'} export coming soon!`);
+    // Visual feedback
+    const btn = event.target.closest('.btn-icon');
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8l3 3 7-7"/></svg>';
+    setTimeout(() => {
+        btn.innerHTML = originalContent;
+    }, 1500);
 }
 
 // Update bot name
