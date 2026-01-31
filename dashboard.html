@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - PolyBot Builder</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="32" height="32" rx="8" fill="url(#gradient)"/>
+                        <path d="M16 8L24 12V20L16 24L8 20V12L16 8Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 16L24 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 16V24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 16L8 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32">
+                                <stop offset="0%" stop-color="#00FFA3"/>
+                                <stop offset="100%" stop-color="#00B8D4"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span>PolyBot Builder</span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="#" class="active">Dashboard</a>
+                </div>
+                <div class="nav-actions">
+                    <div class="user-menu">
+                        <span class="user-email">user@example.com</span>
+                        <button class="btn-secondary" onclick="logout()">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <section class="dashboard-main">
+        <div class="container">
+            <div class="dashboard-header">
+                <div>
+                    <h1>Welcome Back!</h1>
+                    <p>Build and export your Polymarket trading bots</p>
+                </div>
+                <button class="btn-primary btn-large" onclick="startNewBot()">+ New Bot</button>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🤖</div>
+                    <div class="stat-info">
+                        <span class="stat-value">0</span>
+                        <span class="stat-label">Bots Created</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <span class="stat-value">0</span>
+                        <span class="stat-label">Exports</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💳</div>
+                    <div class="stat-info">
+                        <span class="stat-value">Pro</span>
+                        <span class="stat-label">Plan Status</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔑</div>
+                    <div class="stat-info">
+                        <span class="stat-value">Active</span>
+                        <span class="stat-label">API Access</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="dashboard-grid">
+                <!-- Recent Bots -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Recent Bots</h2>
+                        <button class="btn-text">View All</button>
+                    </div>
+                    <div class="empty-state">
+                        <div class="empty-icon">🤖</div>
+                        <h3>No bots yet</h3>
+                        <p>Create your first trading bot to get started</p>
+                        <button class="btn-primary" onclick="startNewBot()">Create First Bot</button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Quick Actions</h2>
+                    </div>
+                    <div class="action-list">
+                        <div class="action-item" onclick="startNewBot()">
+                            <div class="action-icon">✨</div>
+                            <div class="action-content">
+                                <h3>Create New Bot</h3>
+                                <p>Build a bot from scratch or template</p>
+                            </div>
+                            <div class="action-arrow">→</div>
+                        </div>
+                        <div class="action-item" onclick="viewTemplates()">
+                            <div class="action-icon">📋</div>
+                            <div class="action-content">
+                                <h3>Browse Templates</h3>
+                                <p>Start with proven strategies</p>
+                            </div>
+                            <div class="action-arrow">→</div>
+                        </div>
+                        <div class="action-item" onclick="viewDocs()">
+                            <div class="action-icon">📚</div>
+                            <div class="action-content">
+                                <h3>Documentation</h3>
+                                <p>Learn how to use the platform</p>
+                            </div>
+                            <div class="action-arrow">→</div>
+                        </div>
+                        <div class="action-item" onclick="viewApiKeys()">
+                            <div class="action-icon">🔑</div>
+                            <div class="action-content">
+                                <h3>API Keys</h3>
+                                <p>Manage your platform API access</p>
+                            </div>
+                            <div class="action-arrow">→</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Getting Started -->
+                <div class="dashboard-card full-width">
+                    <div class="card-header">
+                        <h2>Getting Started</h2>
+                    </div>
+                    <div class="getting-started-grid">
+                        <div class="getting-started-item">
+                            <div class="step-number">1</div>
+                            <h3>Create Your First Bot</h3>
+                            <p>Use our AI-powered chat to describe your trading strategy</p>
+                        </div>
+                        <div class="getting-started-item">
+                            <div class="step-number">2</div>
+                            <h3>Review the Code</h3>
+                            <p>See the generated code in real-time, make adjustments as needed</p>
+                        </div>
+                        <div class="getting-started-item">
+                            <div class="step-number">3</div>
+                            <h3>Export & Deploy</h3>
+                            <p>Download your bot and run it with your own Polymarket API keys</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Info -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Account</h2>
+                    </div>
+                    <div class="account-info">
+                        <div class="info-row">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">user@example.com</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Plan</span>
+                            <span class="info-value">
+                                <span class="badge-pro">Pro - $30/mo</span>
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Member Since</span>
+                            <span class="info-value">January 2026</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Platform API Key</span>
+                            <span class="info-value mono">pb_••••••••••••••</span>
+                        </div>
+                    </div>
+                    <div class="account-actions">
+                        <button class="btn-secondary btn-full" onclick="manageSubscription()">Manage Subscription</button>
+                        <button class="btn-outline btn-full" onclick="viewSettings()">Account Settings</button>
+                    </div>
+                </div>
+
+                <!-- Resources -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Resources</h2>
+                    </div>
+                    <div class="resource-list">
+                        <a href="RESEARCH.md" class="resource-link">
+                            <span>📖 Polymarket API Research</span>
+                            <span class="resource-arrow">→</span>
+                        </a>
+                        <a href="IMPLEMENTATION-GUIDE.md" class="resource-link">
+                            <span>🔧 Implementation Guide</span>
+                            <span class="resource-arrow">→</span>
+                        </a>
+                        <a href="ARCHITECTURE.md" class="resource-link">
+                            <span>🏗️ Security Architecture</span>
+                            <span class="resource-arrow">→</span>
+                        </a>
+                        <a href="TERMS-OF-SERVICE.md" class="resource-link">
+                            <span>📄 Terms of Service</span>
+                            <span class="resource-arrow">→</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Check if user is logged in
+        if (!localStorage.getItem('isLoggedIn')) {
+            window.location.href = 'index.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            window.location.href = 'index.html';
+        }
+
+        function startNewBot() {
+            alert('Bot builder interface coming soon! This will open the chat-based code generation interface.');
+        }
+
+        function viewTemplates() {
+            alert('Template library coming soon! Browse pre-built strategies like arbitrage, market making, and more.');
+        }
+
+        function viewDocs() {
+            window.open('README.md', '_blank');
+        }
+
+        function viewApiKeys() {
+            alert('API key management coming soon! Here you\'ll regenerate your platform API key for accessing free data sources.');
+        }
+
+        function manageSubscription() {
+            alert('Subscription management coming soon! This will integrate with Stripe for billing management.');
+        }
+
+        function viewSettings() {
+            alert('Account settings coming soon! Update your email, password, and preferences.');
+        }
+    </script>
+</body>
+</html>

@@ -1,3 +1,23 @@
+// Authentication functions
+function signIn(event) {
+    event.preventDefault();
+    // For now, simple fake authentication
+    localStorage.setItem('isLoggedIn', 'true');
+    window.location.href = 'dashboard.html';
+}
+
+function getStarted(event) {
+    event.preventDefault();
+    // For now, redirect to dashboard (will add proper signup later)
+    localStorage.setItem('isLoggedIn', 'true');
+    window.location.href = 'dashboard.html';
+}
+
+// FAQ toggle function
+function toggleFaq(element) {
+    element.classList.toggle('active');
+}
+
 // Smooth scrolling for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -43,8 +63,8 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Observe feature cards, steps, and other elements
-document.querySelectorAll('.feature-card, .step, .faq-item, .technical-card').forEach(el => {
+// Observe feature cards, steps, and other elements (skip FAQ items since they have click handlers)
+document.querySelectorAll('.feature-card, .step, .technical-card').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
     el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
@@ -131,12 +151,7 @@ if (interfacePreview) {
     demoObserver.observe(interfacePreview);
 }
 
-// FAQ accordion functionality (optional enhancement)
-document.querySelectorAll('.faq-item').forEach(item => {
-    item.addEventListener('click', function() {
-        this.classList.toggle('active');
-    });
-});
+// FAQ accordion is handled by toggleFaq() function in onclick handlers
 
 // CTA button tracking (placeholder for analytics)
 document.querySelectorAll('.btn-primary').forEach(btn => {

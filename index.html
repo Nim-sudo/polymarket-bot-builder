@@ -35,11 +35,10 @@
                     <a href="#features">Features</a>
                     <a href="#how-it-works">How it Works</a>
                     <a href="#pricing">Pricing</a>
-                    <a href="#docs">Docs</a>
                 </div>
                 <div class="nav-actions">
-                    <a href="#" class="btn-secondary">Sign In</a>
-                    <a href="#pricing" class="btn-primary">Get Started</a>
+                    <a href="#" class="btn-secondary" onclick="signIn(event)">Sign In</a>
+                    <a href="#" class="btn-primary" onclick="getStarted(event)">Get Started</a>
                 </div>
             </div>
         </div>
@@ -62,8 +61,7 @@
                         <span class="security-badge">💰 We Never Touch Your Funds</span>
                     </div>
                     <div class="hero-cta">
-                        <a href="#pricing" class="btn-primary btn-large">Start Building for $30/mo</a>
-                        <a href="#demo" class="btn-outline btn-large">Watch Demo</a>
+                        <a href="#" class="btn-primary btn-large" onclick="getStarted(event)">Start Building for $30/mo</a>
                     </div>
                     <div class="hero-stats">
                         <div class="stat">
@@ -374,39 +372,74 @@
     </section>
 
     <!-- FAQ Section -->
-    <section class="faq">
+    <section id="faq" class="faq">
         <div class="container">
             <div class="section-header">
                 <h2>Frequently Asked Questions</h2>
             </div>
             <div class="faq-grid">
-                <div class="faq-item">
-                    <h3>Do I need coding experience?</h3>
-                    <p>No! That's the whole point. Describe your strategy in plain English, and we generate the code. However, having some technical knowledge helps when customizing advanced features.</p>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h3>Do I need coding experience?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>No! That's the whole point. Describe your strategy in plain English, and we generate the code. However, having some technical knowledge helps when customizing advanced features.</p>
+                    </div>
                 </div>
-                <div class="faq-item">
-                    <h3>Do you store my API keys or have access to my funds?</h3>
-                    <p><strong>Absolutely not.</strong> We never store your Polymarket API keys or have access to your trading funds. You export the bot code and run it yourself with your own API credentials. We're a code generation tool, not a trading service.</p>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h3>Do you store my API keys or have access to my funds?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p><strong>Absolutely not.</strong> We never store your Polymarket API keys or have access to your trading funds. You export the bot code and run it yourself with your own API credentials. We're a code generation tool, not a trading service.</p>
+                    </div>
                 </div>
-                <div class="faq-item">
-                    <h3>What are the Polymarket fees?</h3>
-                    <p>Polymarket currently charges 0% maker/taker fees on the CLOB, though standard trading fees (0.5-1%) apply to executed orders. Always check current fees on Polymarket's documentation.</p>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h3>What are the Polymarket fees?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Polymarket currently charges 0% maker/taker fees on the CLOB, though standard trading fees (0.5-1%) apply to executed orders. Always check current fees on Polymarket's documentation.</p>
+                    </div>
                 </div>
-                <div class="faq-item">
-                    <h3>What trading limits exist?</h3>
-                    <p>Polymarket enforces minimum order sizes (varies by market), tick size constraints, and you're limited by your wallet balance. Rate limits: 100 requests/min (public) and 60 orders/min (trading).</p>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h3>What trading limits exist?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Polymarket enforces minimum order sizes (varies by market), tick size constraints, and you're limited by your wallet balance. Rate limits: 100 requests/min (public) and 60 orders/min (trading).</p>
+                    </div>
                 </div>
-                <div class="faq-item">
-                    <h3>Can I customize the generated code?</h3>
-                    <p>Absolutely! Export the full source code and modify it however you want. It's your bot. We generate clean, well-documented code that's easy to understand and extend.</p>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h3>Can I customize the generated code?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! Export the full source code and modify it however you want. It's your bot. We generate clean, well-documented code that's easy to understand and extend.</p>
+                    </div>
                 </div>
-                <div class="faq-item">
-                    <h3>What strategies can I build?</h3>
-                    <p>Anything: arbitrage bots, market makers, news-driven traders, limit order strategies, portfolio rebalancers, and more. We provide templates, but you can build custom logic for any strategy.</p>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h3>What strategies can I build?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Anything: arbitrage bots, market makers, news-driven traders, limit order strategies, portfolio rebalancers, and more. We provide templates, but you can build custom logic for any strategy.</p>
+                    </div>
                 </div>
-                <div class="faq-item">
-                    <h3>How do I add data sources like news or weather?</h3>
-                    <p>We provide free data feeds (news, weather, social media) built into your bot code. For Polymarket trading, you add your own API keys. You control what data your bot accesses and keep sensitive credentials private.</p>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <h3>How do I add data sources like news or weather?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We provide free data feeds (news, weather, social media) built into your bot code. For Polymarket trading, you add your own API keys. You control what data your bot accesses and keep sensitive credentials private.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -448,30 +481,26 @@
                     <p class="footer-description">Build sophisticated Polymarket trading bots without writing code.</p>
                 </div>
                 <div class="footer-col">
-                    <h4>Product</h4>
+                    <h4>Navigate</h4>
                     <ul>
                         <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How it Works</a></li>
                         <li><a href="#pricing">Pricing</a></li>
-                        <li><a href="#docs">Documentation</a></li>
-                        <li><a href="#examples">Examples</a></li>
+                        <li><a href="#faq">FAQ</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4>Resources</h4>
+                    <h4>Legal</h4>
                     <ul>
-                        <li><a href="#blog">Blog</a></li>
-                        <li><a href="#guides">Guides</a></li>
-                        <li><a href="#api">API Reference</a></li>
-                        <li><a href="#support">Support</a></li>
+                        <li><a href="TERMS-OF-SERVICE.md">Terms of Service</a></li>
+                        <li><a href="PRIVACY-POLICY.md">Privacy Policy</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4>Company</h4>
+                    <h4>About</h4>
                     <ul>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#terms">Terms of Service</a></li>
-                        <li><a href="#privacy">Privacy Policy</a></li>
-                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="mailto:support@polybotbuilder.com">Contact</a></li>
                     </ul>
                 </div>
             </div>
