@@ -1,9 +1,9 @@
-// Claude Opus 4.5 API Integration
+// Claude Opus 4.5 API Integration (via secure backend)
 
 class ClaudeAPI {
-    constructor(apiKey) {
-        this.apiKey = apiKey;
-        this.baseURL = 'https://api.anthropic.com/v1/messages';
+    constructor() {
+        // API calls go through our secure backend
+        this.baseURL = '/api/claude';
         this.model = 'claude-opus-4-5-20251101';
     }
 
@@ -17,20 +17,17 @@ class ClaudeAPI {
             const response = await fetch(this.baseURL, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': this.apiKey,
-                    'anthropic-version': '2023-06-01'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: this.model,
-                    max_tokens: 4096,
                     messages: messages,
                     system: this.getSystemPrompt()
                 })
             });
 
             if (!response.ok) {
-                throw new Error(`API error: ${response.status} ${response.statusText}`);
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`API error: ${response.status} - ${errorData.error || response.statusText}`);
             }
 
             const data = await response.json();
@@ -50,14 +47,15 @@ class ClaudeAPI {
 3. Generate clean, production-ready TypeScript code for their trading bots
 4. Provide helpful explanations without being verbose
 
-Important guidelines:
-- Never use emojis in your responses
+CRITICAL RULES:
+- NEVER use emojis in any responses
 - Keep responses professional and to the point
 - When asking for numbers, provide inline input fields
 - When presenting choices, provide inline dropdowns
 - Generate complete, working code that users can deploy immediately
 - Include proper error handling and rate limiting in generated code
 - Follow best practices for the Polymarket CLOB API
+- After user selects a market, do NOT confirm - proceed directly to the next question
 
 Current step: Gathering requirements for a new trading bot.`;
     }
@@ -80,21 +78,5 @@ Return only the code, no explanations.`;
     }
 }
 
-// API Key management
-function getAPIKey() {
-    return localStorage.getItem('claude_api_key') || null;
-}
-
-function setAPIKey(apiKey) {
-    localStorage.setItem('claude_api_key', apiKey);
-}
-
-function hasAPIKey() {
-    return !!getAPIKey();
-}
-
 // Make globally available for browser
 window.ClaudeAPI = ClaudeAPI;
-window.getAPIKey = getAPIKey;
-window.setAPIKey = setAPIKey;
-window.hasAPIKey = hasAPIKey;

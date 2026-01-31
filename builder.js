@@ -9,27 +9,14 @@ let currentChatId = localStorage.getItem('currentChatId');
 let currentContextMenuChatId = null;
 let claudeAPI = null;
 
-// Initialize Claude API if key exists
+// Initialize Claude API (no key needed - handled by backend)
 function initializeClaudeAPI() {
-    const apiKey = getAPIKey();
-    if (apiKey) {
-        claudeAPI = new ClaudeAPI(apiKey);
-        return true;
-    }
-    return false;
+    claudeAPI = new ClaudeAPI();
+    return true;
 }
 
-// Check and prompt for API key
+// No need to check for API key - it's on the server
 function ensureAPIKey() {
-    if (!hasAPIKey()) {
-        const apiKey = prompt('Please enter your Anthropic API key to use Claude Opus 4.5:\n\nYou can get one at: https://console.anthropic.com/');
-        if (apiKey && apiKey.trim()) {
-            setAPIKey(apiKey.trim());
-            initializeClaudeAPI();
-            return true;
-        }
-        return false;
-    }
     return true;
 }
 
@@ -291,8 +278,6 @@ function sendMessage() {
         // Hide right pane during plan mode
         document.querySelector('.strategy-pane')?.classList.add('plan-mode');
         document.querySelector('.builder-container')?.classList.add('plan-mode');
-        // Show market search for first question
-        showMarketSearch();
     }
 
     // Show scroll button
@@ -402,9 +387,8 @@ function createInlineSubmitButton(buttonText, onclickHandler) {
 function createMarketSearchInput() {
     return `
         <div class="inline-market-search">
-            <input type="text" id="inlineMarketSearch" class="inline-input" placeholder="Search or paste a Polymarket link..." oninput="searchInlineMarkets(this.value)" />
+            <input type="text" id="inlineMarketSearch" class="inline-input" placeholder="Search or paste a Polymarket link" oninput="searchInlineMarkets(this.value)" onkeydown="handleInlineMarketKeydown(event)" />
             <div class="inline-market-dropdown" id="inlineMarketDropdown"></div>
-            <button class="inline-submit-btn" onclick="submitMarketSearch()" style="margin-top: 8px;">Continue</button>
         </div>
     `;
 }
@@ -1011,17 +995,27 @@ function selectInlineMarket(title) {
         dropdown.classList.remove('visible');
         dropdown.innerHTML = '';
     }
+
+    // Auto-submit after selection
+    document.getElementById('chatInput').value = title;
+    sendMessage();
 }
 
 function submitMarketSearch() {
     const input = document.getElementById('inlineMarketSearch');
     if (!input || !input.value.trim()) {
-        alert('Please enter a market name or link');
         return;
     }
 
     document.getElementById('chatInput').value = input.value;
     sendMessage();
+}
+
+function handleInlineMarketKeydown(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        submitMarketSearch();
+    }
 }
 
 // Inline form submission handlers

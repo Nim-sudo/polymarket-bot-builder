@@ -15,9 +15,9 @@
     --text-secondary: #94A3B8;
     --text-tertiary: #64748B;
 
-    --accent-primary: #00FFA3;
-    --accent-secondary: #00B8D4;
-    --accent-gradient: linear-gradient(135deg, #00FFA3 0%, #00B8D4 100%);
+    --accent-primary: #96EE8F;
+    --accent-secondary: #5ED64E;
+    --accent-gradient: linear-gradient(135deg, #96EE8F 0%, #5ED64E 100%);
 
     --border-color: #334155;
     --border-radius: 12px;
