@@ -102,16 +102,44 @@
         <div class="builder-container">
             <!-- Left Pane: Chat -->
             <div class="builder-pane chat-pane">
-                <div class="chat-messages" id="chatMessages">
-                    <div class="welcome-message">
-                        <h2>Build Your Polymarket Trading Bot</h2>
-                        <p>Describe your trading strategy in plain English. I'll generate the code for you.</p>
-                        <div class="example-prompts">
-                            <button class="example-prompt" onclick="useExample(this)">Create an arbitrage bot that monitors similar markets</button>
-                            <button class="example-prompt" onclick="useExample(this)">Build a market maker with 2% spread</button>
-                            <button class="example-prompt" onclick="useExample(this)">Make a news-driven bot for election markets</button>
+                <!-- Full Screen Welcome (shown on new chat) -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-content">
+                        <div class="welcome-badge">
+                            <span>New</span>
+                            <span>Introducing PolyBot Builder →</span>
+                        </div>
+                        <h1 class="welcome-title">What's on your mind?</h1>
+                        <div class="welcome-input-wrapper">
+                            <button class="btn-attach-welcome" title="Attach file">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 3v14M3 10h14"/>
+                                </svg>
+                            </button>
+                            <input
+                                type="text"
+                                id="welcomeInput"
+                                class="welcome-input"
+                                placeholder="Describe your trading strategy..."
+                                onkeydown="handleWelcomeKeydown(event)"
+                            />
+                            <button class="btn-send-welcome" onclick="sendFromWelcome()" title="Send">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M2 10l16-8-8 16-2-6-6-2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="welcome-examples">
+                            <button class="welcome-example" onclick="useWelcomeExample(this)">Create an arbitrage bot</button>
+                            <button class="welcome-example" onclick="useWelcomeExample(this)">Build a market maker</button>
+                            <button class="welcome-example" onclick="useWelcomeExample(this)">News-driven trading bot</button>
                         </div>
                     </div>
+                </div>
+
+                <!-- Chat Messages (hidden initially) -->
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be added here dynamically -->
                 </div>
                 <div class="recommended-messages" id="recommendedMessages">
                     <!-- Dynamic recommended messages will appear here -->

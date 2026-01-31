@@ -37,7 +37,9 @@ function newChat() {
         title: 'New Chat',
         messages: [],
         pinned: false,
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        planMode: false,
+        planAnswers: 0
     };
 
     chats.unshift(newChat);
@@ -45,19 +47,12 @@ function newChat() {
     loadChats();
     switchChat(chatId);
 
-    // Clear chat area and show welcome
-    const chatMessages = document.getElementById('chatMessages');
-    chatMessages.innerHTML = `
-        <div class="welcome-message">
-            <h2>Build Your Polymarket Trading Bot</h2>
-            <p>Describe your trading strategy in plain English. I'll generate the code for you.</p>
-            <div class="example-prompts">
-                <button class="example-prompt" onclick="useExample(this)">Create an arbitrage bot that monitors similar markets</button>
-                <button class="example-prompt" onclick="useExample(this)">Build a market maker with 2% spread</button>
-                <button class="example-prompt" onclick="useExample(this)">Make a news-driven bot for election markets</button>
-            </div>
-        </div>
-    `;
+    // Show welcome screen, hide chat messages
+    showWelcomeScreen();
+
+    // Clear input areas
+    document.getElementById('chatInput').value = '';
+    document.getElementById('welcomeInput').value = '';
 
     // Clear code
     document.getElementById('codeContent').innerHTML = `
@@ -125,27 +120,36 @@ function loadChat(chatId) {
     // Load messages
     const chatMessages = document.getElementById('chatMessages');
     if (chat.messages.length === 0) {
-        chatMessages.innerHTML = `
-            <div class="welcome-message">
-                <h2>Build Your Polymarket Trading Bot</h2>
-                <p>Describe your trading strategy in plain English. I'll generate the code for you.</p>
-                <div class="example-prompts">
-                    <button class="example-prompt" onclick="useExample(this)">Create an arbitrage bot that monitors similar markets</button>
-                    <button class="example-prompt" onclick="useExample(this)">Build a market maker with 2% spread</button>
-                    <button class="example-prompt" onclick="useExample(this)">Make a news-driven bot for election markets</button>
-                </div>
-            </div>
-        `;
+        // Show welcome screen for empty chats
+        showWelcomeScreen();
+        chatMessages.innerHTML = '';
     } else {
+        // Hide welcome screen and show messages
+        hideWelcomeScreen();
         chatMessages.innerHTML = '';
         chat.messages.forEach(msg => {
-            addMessageToDOM(msg.text, msg.type);
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${msg.type}`;
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = formatMessage(msg.text);
+            messageDiv.appendChild(contentDiv);
+            chatMessages.appendChild(messageDiv);
         });
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
     // Load code if exists
     if (chat.code) {
         showCode(chat.code);
+    }
+
+    // Set plan mode visual state
+    const strategyPane = document.querySelector('.strategy-pane');
+    if (chat.planMode) {
+        strategyPane?.classList.add('plan-mode');
+    } else {
+        strategyPane?.classList.remove('plan-mode');
     }
 }
 
@@ -252,30 +256,65 @@ function sendMessage() {
     saveChats();
     loadChats();
 
+    // Enter plan mode on first message
+    if (chat.messages.length === 1) {
+        chat.planMode = true;
+        chat.planAnswers = 0;
+        // Dim right pane during plan mode
+        document.querySelector('.strategy-pane')?.classList.add('plan-mode');
+    }
+
     // Show generating status
-    updateStatus('Generating code...', true);
+    updateStatus(chat.planMode ? 'Planning strategy...' : 'Generating code...', true);
 
     // Simulate AI response
     setTimeout(() => {
-        const response = generateResponse(message);
+        let response;
+
+        if (chat.planMode) {
+            // In plan mode, ask clarifying questions
+            if (chat.planAnswers === 0) {
+                response = `Great! I'll help you build that trading bot. To create the best strategy, I need to understand a few things:\n\n**1. Risk Management:** What's your maximum position size and daily loss limit you're comfortable with?`;
+                chat.planAnswers++;
+            } else if (chat.planAnswers === 1) {
+                response = `Perfect! Next question:\n\n**2. Trading Frequency:** How often should the bot check for trading opportunities? (e.g., every 30 seconds, every minute, etc.)`;
+                chat.planAnswers++;
+            } else if (chat.planAnswers === 2) {
+                response = `Great! Final question:\n\n**3. Execution:** What price should trigger your trades? Should it be based on market price, limit orders, or specific thresholds?`;
+                chat.planAnswers++;
+            } else {
+                // Exit plan mode and generate code
+                chat.planMode = false;
+                // Restore right pane
+                document.querySelector('.strategy-pane')?.classList.remove('plan-mode');
+
+                response = `Excellent! I now have all the information I need. Let me generate your custom trading bot...\n\n✅ Strategy configured\n✅ Risk parameters set\n✅ Trading logic defined\n\nYour bot code is ready! Check the Code tab on the right to review the implementation. You can export it when you're ready.`;
+
+                const code = generateBotCode(message);
+                chat.code = code;
+                showCode(code);
+            }
+        } else {
+            // Normal mode (if user starts new message after plan mode)
+            response = generateResponse(message);
+            const code = generateBotCode(message);
+            chat.code = code;
+            showCode(code);
+        }
+
         chat.messages.push({ type: 'assistant', text: response });
         addMessageToDOM(response, 'assistant');
 
-        const code = generateBotCode(message);
-        chat.code = code;
-        showCode(code);
-
         saveChats();
         updateStatus('Ready', false);
-    }, 2000);
+    }, 1500);
 }
 
 function addMessageToDOM(text, type) {
-    const messagesContainer = document.getElementById('chatMessages');
+    // Hide welcome screen when first message is added
+    hideWelcomeScreen();
 
-    // Remove welcome message if exists
-    const welcome = messagesContainer.querySelector('.welcome-message');
-    if (welcome) welcome.remove();
+    const messagesContainer = document.getElementById('chatMessages');
 
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}`;
@@ -611,7 +650,66 @@ switchChat = function(chatId) {
     updateRecommendedMessages();
 };
 
+// Welcome screen functions
+function showWelcomeScreen() {
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const chatMessages = document.getElementById('chatMessages');
+    const inputContainer = document.querySelector('.chat-input-container');
+    const recommendedMessages = document.getElementById('recommendedMessages');
+
+    if (welcomeScreen) welcomeScreen.classList.remove('hidden');
+    if (chatMessages) chatMessages.style.display = 'none';
+    if (inputContainer) inputContainer.style.display = 'none';
+    if (recommendedMessages) recommendedMessages.style.display = 'none';
+}
+
+function hideWelcomeScreen() {
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const chatMessages = document.getElementById('chatMessages');
+    const inputContainer = document.querySelector('.chat-input-container');
+    const recommendedMessages = document.getElementById('recommendedMessages');
+
+    if (welcomeScreen) welcomeScreen.classList.add('hidden');
+    if (chatMessages) chatMessages.style.display = 'flex';
+    if (inputContainer) inputContainer.style.display = 'flex';
+    if (recommendedMessages) recommendedMessages.style.display = 'flex';
+}
+
+function handleWelcomeKeydown(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendFromWelcome();
+    }
+}
+
+function sendFromWelcome() {
+    const input = document.getElementById('welcomeInput');
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    // Transfer message to main chat input and send
+    document.getElementById('chatInput').value = message;
+    input.value = '';
+
+    sendMessage();
+}
+
+function useWelcomeExample(button) {
+    const text = button.textContent;
+    document.getElementById('welcomeInput').value = text;
+    document.getElementById('welcomeInput').focus();
+}
+
 // Initialize recommendations on load
 window.addEventListener('load', () => {
     setTimeout(updateRecommendedMessages, 500);
+
+    // Show welcome screen if chat is empty
+    const chat = getCurrentChat();
+    if (!chat || chat.messages.length === 0) {
+        showWelcomeScreen();
+    } else {
+        hideWelcomeScreen();
+    }
 });
