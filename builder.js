@@ -440,6 +440,10 @@ function exportBot() {
     alert(`Exporting "${botName}"...\n\nYour bot will be downloaded as a complete project with:\n- TypeScript source code\n- Environment template\n- README and documentation\n- Docker configuration\n\n(Full export feature coming soon)`);
 }
 
+function openSettings() {
+    alert('Settings coming soon! Here you\'ll manage:\n- API credentials\n- Notification preferences\n- Export options\n- Account settings');
+}
+
 function logout() {
     localStorage.removeItem('isLoggedIn');
     window.location.href = 'index.html';
