@@ -185,6 +185,25 @@ body {
     margin-bottom: 24px;
 }
 
+.security-badges {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.security-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: rgba(0, 184, 212, 0.1);
+    border: 1px solid rgba(0, 184, 212, 0.3);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-secondary);
+}
+
 .hero h1 {
     font-size: 56px;
     font-weight: 800;
