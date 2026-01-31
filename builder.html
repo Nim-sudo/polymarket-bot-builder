@@ -11,9 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="builder-page">
-    <!-- Top Bar -->
-    <div class="builder-topbar">
-        <div class="topbar-left">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
             <div class="logo-small">
                 <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="32" height="32" rx="8" fill="url(#gradient)"/>
@@ -28,112 +28,147 @@
                         </linearGradient>
                     </defs>
                 </svg>
-                <span>PolyBot Builder</span>
             </div>
-            <div class="bot-name">
-                <input type="text" id="botName" placeholder="Untitled Bot" />
-            </div>
-        </div>
-        <div class="topbar-right">
-            <button class="btn-secondary btn-small" onclick="saveDraft()">Save Draft</button>
-            <button class="btn-primary btn-small" onclick="exportBot()">Export Bot</button>
-            <button class="btn-icon" onclick="showMenu()">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
-                    <circle cx="10" cy="10" r="1" fill="currentColor"/>
-                    <circle cx="10" cy="5" r="1" fill="currentColor"/>
-                    <circle cx="10" cy="15" r="1" fill="currentColor"/>
+            <button class="btn-new-chat" onclick="newChat()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 3v10M3 8h10"/>
                 </svg>
+                New Chat
+            </button>
+        </div>
+
+        <div class="chat-list" id="chatList">
+            <!-- Chats will be dynamically added here -->
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="sidebar-menu-item" onclick="window.location.href='dashboard.html'">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="2" y="2" width="5" height="5" rx="1"/>
+                    <rect x="9" y="2" width="5" height="5" rx="1"/>
+                    <rect x="2" y="9" width="5" height="5" rx="1"/>
+                    <rect x="9" y="9" width="5" height="5" rx="1"/>
+                </svg>
+                Dashboard
+            </button>
+            <button class="sidebar-menu-item" onclick="logout()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M6 14H3a1 1 0 01-1-1V3a1 1 0 011-1h3M11 11l3-3-3-3M14 8H6"/>
+                </svg>
+                Sign Out
             </button>
         </div>
     </div>
 
-    <!-- Main Builder Interface -->
-    <div class="builder-container">
-        <!-- Left Pane: Chat -->
-        <div class="builder-pane chat-pane">
-            <div class="pane-header">
-                <h3>Chat</h3>
-                <span class="pane-subtitle">Describe your trading strategy</span>
+    <!-- Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 10h14M3 5h14M3 15h14"/>
+        </svg>
+    </button>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Bar -->
+        <div class="builder-topbar">
+            <div class="topbar-left">
+                <input type="text" id="botName" class="bot-name-input" placeholder="Untitled Bot" />
             </div>
-            <div class="chat-messages" id="chatMessages">
-                <div class="message assistant">
-                    <div class="message-content">
-                        <p>Hi! I'll help you build your Polymarket trading bot.</p>
-                        <p>Tell me what kind of bot you want to create. For example:</p>
-                        <ul>
-                            <li>"Create an arbitrage bot that monitors similar markets"</li>
-                            <li>"Build a market maker with 2% spread"</li>
-                            <li>"Make a news-driven bot for election markets"</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-input-container">
-                <textarea
-                    id="chatInput"
-                    placeholder="Describe your trading strategy..."
-                    rows="3"
-                    onkeydown="handleChatKeydown(event)"
-                ></textarea>
-                <button class="btn-send" onclick="sendMessage()">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M2 10l16-8-8 16-2-6-6-2z"/>
-                    </svg>
-                    Send
-                </button>
+            <div class="topbar-right">
+                <button class="btn-secondary btn-small" onclick="saveDraft()">Save Draft</button>
+                <button class="btn-primary btn-small" onclick="exportBot()">Export Bot</button>
             </div>
         </div>
 
-        <!-- Right Pane: Code -->
-        <div class="builder-pane code-pane">
-            <div class="pane-header">
-                <div class="header-tabs">
-                    <button class="tab active" onclick="switchTab('code')">Code</button>
-                    <button class="tab" onclick="switchTab('preview')">Preview</button>
-                    <button class="tab" onclick="switchTab('config')">Config</button>
+        <!-- Builder Interface -->
+        <div class="builder-container">
+            <!-- Left Pane: Chat -->
+            <div class="builder-pane chat-pane">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="welcome-message">
+                        <h2>Build Your Polymarket Trading Bot</h2>
+                        <p>Describe your trading strategy in plain English. I'll generate the code for you.</p>
+                        <div class="example-prompts">
+                            <button class="example-prompt" onclick="useExample(this)">Create an arbitrage bot that monitors similar markets</button>
+                            <button class="example-prompt" onclick="useExample(this)">Build a market maker with 2% spread</button>
+                            <button class="example-prompt" onclick="useExample(this)">Make a news-driven bot for election markets</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="code-actions">
-                    <button class="btn-text" onclick="copyCode()">Copy</button>
-                    <select class="language-select" onchange="changeLanguage(this.value)">
-                        <option value="typescript">TypeScript</option>
-                        <option value="python">Python</option>
-                    </select>
+                <div class="chat-input-container">
+                    <textarea
+                        id="chatInput"
+                        placeholder="Describe your trading strategy..."
+                        rows="1"
+                        onkeydown="handleChatKeydown(event)"
+                        oninput="autoResizeTextarea(this)"
+                    ></textarea>
+                    <button class="btn-send" onclick="sendMessage()" id="sendButton">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 10l16-8-8 16-2-6-6-2z"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
-            <div class="code-content" id="codeContent">
-                <div class="code-editor">
-                    <pre><code id="codeBlock"><span class="comment">// Your bot code will appear here as you describe your strategy in the chat</span>
 
-<span class="comment">// Start by telling me what kind of bot you want to build!</span></code></pre>
+            <!-- Right Pane: Code -->
+            <div class="builder-pane code-pane">
+                <div class="pane-header">
+                    <div class="header-tabs">
+                        <button class="tab active" onclick="switchTab('code')">Code</button>
+                        <button class="tab" onclick="switchTab('preview')">Preview</button>
+                    </div>
+                    <div class="code-actions">
+                        <button class="btn-text" onclick="copyCode()">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="5" y="5" width="9" height="9" rx="1"/>
+                                <path d="M3 11V3a1 1 0 011-1h8"/>
+                            </svg>
+                            Copy
+                        </button>
+                        <select class="language-select" onchange="changeLanguage(this.value)">
+                            <option value="typescript">TypeScript</option>
+                            <option value="python">Python</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="code-status">
-                <span class="status-indicator"></span>
-                <span class="status-text">Ready</span>
+                <div class="code-content" id="codeContent">
+                    <div class="code-placeholder">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="16 18 22 24 16 30"/>
+                            <polyline points="32 18 26 24 32 30"/>
+                        </svg>
+                        <p>Your bot code will appear here</p>
+                        <span>Start by describing your strategy in the chat</span>
+                    </div>
+                </div>
+                <div class="code-status">
+                    <span class="status-indicator"></span>
+                    <span class="status-text">Ready</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Menu Overlay -->
-    <div class="menu-overlay" id="menuOverlay" onclick="hideMenu()">
-        <div class="menu-dropdown" onclick="event.stopPropagation()">
-            <div class="menu-item" onclick="newBot()">
-                <span>New Bot</span>
-            </div>
-            <div class="menu-item" onclick="window.location.href='dashboard.html'">
-                <span>Dashboard</span>
-            </div>
-            <div class="menu-divider"></div>
-            <div class="menu-item" onclick="showTemplates()">
-                <span>Browse Templates</span>
-            </div>
-            <div class="menu-item" onclick="window.open('README.md', '_blank')">
-                <span>Documentation</span>
-            </div>
-            <div class="menu-divider"></div>
-            <div class="menu-item" onclick="logout()">
-                <span>Sign Out</span>
-            </div>
+    <!-- Chat Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" onclick="renameChat()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M7 2h5v5M12 2L5 9m-2 2l2-2"/>
+            </svg>
+            Rename
+        </div>
+        <div class="context-menu-item" onclick="pinChat()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M7 2v6M4 5l3 3 3-3"/>
+            </svg>
+            Pin
+        </div>
+        <div class="context-menu-item danger" onclick="deleteChat()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M2 4h10M5 4V2h4v2M3 4v8a1 1 0 001 1h6a1 1 0 001-1V4"/>
+            </svg>
+            Delete
         </div>
     </div>
 
