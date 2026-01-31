@@ -47,6 +47,8 @@
     justify-content: center;
     transition: var(--transition);
     flex-shrink: 0;
+    width: 40px;
+    height: 40px;
 }
 
 .sidebar-toggle-btn {
@@ -892,10 +894,10 @@
     width: 36px;
     height: 36px;
     padding: 0;
-    background: var(--accent-primary);
-    color: var(--bg-primary);
+    background: #00A86B;
+    color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -905,7 +907,7 @@
 }
 
 .btn-send-welcome:hover {
-    background: var(--accent-secondary);
+    background: #00C97C;
     transform: scale(1.05);
 }
 
@@ -1019,7 +1021,8 @@
 .scroll-to-bottom {
     position: absolute;
     bottom: 140px;
-    right: 24px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 40px;
     height: 40px;
     background: var(--bg-secondary);
@@ -1355,9 +1358,10 @@
     width: 32px;
     height: 32px;
     padding: 0;
-    background: transparent;
-    color: var(--text-secondary);
+    background: #00A86B;
+    color: white;
     border: none;
+    border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1367,7 +1371,8 @@
 }
 
 .btn-send:hover {
-    color: var(--accent-primary);
+    background: #00C97C;
+    transform: scale(1.05);
 }
 
 .btn-send:disabled {
@@ -1565,6 +1570,115 @@
     .example-prompts {
         max-width: 100%;
     }
+}
+
+/* Inline Input Fields in Messages */
+.inline-market-search {
+    margin: 12px 0;
+    position: relative;
+}
+
+.inline-market-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    max-height: 240px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: none;
+    z-index: 10;
+}
+
+.inline-market-dropdown.visible {
+    display: block;
+}
+
+.inline-market-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: var(--transition);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.inline-market-item:last-child {
+    border-bottom: none;
+}
+
+.inline-market-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.inline-input-group {
+    margin: 12px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.inline-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.inline-input,
+.inline-dropdown {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.inline-input:focus,
+.inline-dropdown:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    background: var(--bg-tertiary);
+}
+
+.inline-input::placeholder {
+    color: var(--text-tertiary);
+}
+
+.inline-dropdown {
+    cursor: pointer;
+}
+
+.inline-submit-btn {
+    margin-top: 12px;
+    padding: 10px 20px;
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+    align-self: flex-start;
+}
+
+.inline-submit-btn:hover {
+    background: var(--accent-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 255, 163, 0.3);
+}
+
+.inline-submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
 }
 
 /* Scrollbar Styling */

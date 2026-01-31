@@ -94,7 +94,7 @@
             <div class="topbar-right">
                 <span class="autosave-status" id="autosaveStatus">Last saved just now</span>
                 <button class="btn-secondary btn-small" onclick="saveDraft()">Save Draft</button>
-                <button class="btn-primary-solid btn-small" onclick="exportBot()">Export Bot</button>
+                <button class="btn-secondary btn-small" onclick="exportBot()">Export</button>
             </div>
         </div>
 
@@ -124,8 +124,8 @@
                                 onkeydown="handleWelcomeKeydown(event)"
                             />
                             <button class="btn-send-welcome" onclick="sendFromWelcome()" title="Send">
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M2 10l16-8-8 16-2-6-6-2z"/>
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M8 12V4M4 8l4-4 4 4"/>
                                 </svg>
                             </button>
                         </div>
@@ -135,7 +135,7 @@
                             <button class="welcome-example" onclick="useWelcomeExample(this)">News-driven trading bot</button>
                         </div>
                         <div class="trending-markets">
-                            <h3 class="trending-title">📈 Trending Markets</h3>
+                            <h3 class="trending-title">Trending Markets</h3>
                             <div class="trending-grid">
                                 <div class="trending-market" onclick="selectTrendingMarket(this)" data-market="Will Trump win 2024?">
                                     <div class="trending-market-title">Will Trump win 2024?</div>
@@ -212,8 +212,8 @@
                         ></textarea>
                     </div>
                     <button class="btn-send" onclick="sendMessage()" id="sendButton">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M2 10l16-8-8 16-2-6-6-2z"/>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 12V4M4 8l4-4 4 4"/>
                         </svg>
                     </button>
                 </div>
@@ -411,6 +411,7 @@
         </div>
     </div>
 
+    <script src="claude-api.js"></script>
     <script src="builder.js"></script>
 </body>
 </html>

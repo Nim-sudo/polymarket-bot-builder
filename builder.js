@@ -7,9 +7,37 @@ if (!localStorage.getItem('isLoggedIn')) {
 let chats = JSON.parse(localStorage.getItem('chats') || '[]');
 let currentChatId = localStorage.getItem('currentChatId');
 let currentContextMenuChatId = null;
+let claudeAPI = null;
+
+// Initialize Claude API if key exists
+function initializeClaudeAPI() {
+    const apiKey = getAPIKey();
+    if (apiKey) {
+        claudeAPI = new ClaudeAPI(apiKey);
+        return true;
+    }
+    return false;
+}
+
+// Check and prompt for API key
+function ensureAPIKey() {
+    if (!hasAPIKey()) {
+        const apiKey = prompt('Please enter your Anthropic API key to use Claude Opus 4.5:\n\nYou can get one at: https://console.anthropic.com/');
+        if (apiKey && apiKey.trim()) {
+            setAPIKey(apiKey.trim());
+            initializeClaudeAPI();
+            return true;
+        }
+        return false;
+    }
+    return true;
+}
 
 // Load chats on startup
 window.addEventListener('load', () => {
+    // Initialize Claude API
+    initializeClaudeAPI();
+
     loadChats();
     if (currentChatId) {
         loadChat(currentChatId);
@@ -273,52 +301,32 @@ function sendMessage() {
     // Show generating status
     updateStatus(chat.planMode ? 'Planning strategy...' : 'Generating code...', true);
 
-    // Simulate AI response
-    setTimeout(() => {
-        let response;
+    // Check for API key
+    if (!ensureAPIKey()) {
+        updateStatus('API key required', false);
+        return;
+    }
 
-        if (chat.planMode) {
-            // In plan mode, ask clarifying questions
-            if (chat.planAnswers === 0) {
-                response = `Great! I'll help you build that trading bot. First, I need to know:\n\n**What market do you want to trade?** Please provide the market name or Polymarket link.`;
-                chat.planAnswers++;
-            } else if (chat.planAnswers === 1) {
-                // Check if user provided a link, if not, show preview
-                const hasLink = message.includes('polymarket.com');
-                if (hasLink) {
-                    response = `Perfect! I found that market. Let me show you a preview:\n\n📊 **Market Preview**\n• Current Price: 0.53\n• 24h Volume: $12.5K\n• Spread: 2%\n\nIs this the correct market? (Reply "yes" to continue or provide a different link)`;
-                } else {
-                    // Simulate finding the market
-                    response = `I found a market matching "${message}". Here's what I found:\n\n🔗 **Market Link:** https://polymarket.com/event/example-market\n\n📊 **Market Preview**\n• Current Price: 0.53\n• 24h Volume: $12.5K\n• Spread: 2%\n\nIs this the correct market? (Reply "yes" to continue)`;
-                }
-                chat.planAnswers++;
-            } else if (chat.planAnswers === 2) {
-                response = `Excellent! Now let's configure your strategy:\n\n**Risk Management:** What's your maximum position size and daily loss limit?`;
-                chat.planAnswers++;
-            } else if (chat.planAnswers === 3) {
-                response = `Perfect! Next:\n\n**Trading Frequency:** How often should the bot check for opportunities? (e.g., every 30 seconds, every minute)`;
-                chat.planAnswers++;
-            } else if (chat.planAnswers === 4) {
-                response = `Great! Final question:\n\n**Execution:** What price should trigger your trades? (market price, limit orders, or specific thresholds)`;
-                chat.planAnswers++;
-            } else {
-                // Exit plan mode and generate code
-                chat.planMode = false;
-                // Restore right pane
-                document.querySelector('.strategy-pane')?.classList.remove('plan-mode');
-                document.querySelector('.builder-container')?.classList.remove('plan-mode');
-                // Hide market search if still visible
-                hideMarketSearch();
+    // Generate AI response
+    generateAIResponse(chat, message).then(response => {
+        // Track plan progress
+        if (chat.planMode && chat.planAnswers < 4) {
+            chat.planAnswers++;
+        } else if (chat.planMode && chat.planAnswers >= 4) {
+            // Exit plan mode and generate code
+            chat.planMode = false;
+            chat.planAnswers++;
+            // Restore right pane
+            document.querySelector('.strategy-pane')?.classList.remove('plan-mode');
+            document.querySelector('.builder-container')?.classList.remove('plan-mode');
+            // Hide market search if still visible
+            hideMarketSearch();
 
-                response = `Excellent! I now have all the information I need. Let me generate your custom trading bot...\n\n✅ Market configured\n✅ Strategy defined\n✅ Risk parameters set\n✅ Trading logic implemented\n\nYour bot code is ready! Check the Code tab on the right to review the implementation. You can export it when you're ready.`;
-
-                const code = generateBotCode(message);
-                chat.code = code;
-                showCode(code);
-            }
-        } else {
+            const code = generateBotCode(message);
+            chat.code = code;
+            showCode(code);
+        } else if (!chat.planMode) {
             // Normal mode (if user starts new message after plan mode)
-            response = generateResponse(message);
             const code = generateBotCode(message);
             chat.code = code;
             showCode(code);
@@ -329,7 +337,11 @@ function sendMessage() {
 
         saveChats();
         updateStatus('Ready', false);
-    }, 1500);
+    }).catch(error => {
+        console.error('Error generating response:', error);
+        updateStatus('Error generating response', false);
+        alert('Failed to generate response. Please check your API key and try again.');
+    });
 }
 
 function addMessageToDOM(text, type) {
@@ -355,6 +367,97 @@ function formatMessage(text) {
     return text
         .replace(/\n/g, '<br>')
         .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+// Helper function to create inline input fields
+function createInlineInput(label, id, placeholder, type = 'text') {
+    return `
+        <div class="inline-input-group">
+            <label class="inline-label">${label}</label>
+            <input type="${type}" id="${id}" class="inline-input" placeholder="${placeholder}" />
+        </div>
+    `;
+}
+
+// Helper function to create inline dropdown
+function createInlineDropdown(label, id, options) {
+    const optionsHTML = options.map(opt => `<option value="${opt.value}">${opt.label}</option>`).join('');
+    return `
+        <div class="inline-input-group">
+            <label class="inline-label">${label}</label>
+            <select id="${id}" class="inline-dropdown">
+                <option value="">Select...</option>
+                ${optionsHTML}
+            </select>
+        </div>
+    `;
+}
+
+// Helper function to create submit button for inline forms
+function createInlineSubmitButton(buttonText, onclickHandler) {
+    return `<button class="inline-submit-btn" onclick="${onclickHandler}">${buttonText}</button>`;
+}
+
+// Helper function to create market search input with dropdown
+function createMarketSearchInput() {
+    return `
+        <div class="inline-market-search">
+            <input type="text" id="inlineMarketSearch" class="inline-input" placeholder="Search or paste a Polymarket link..." oninput="searchInlineMarkets(this.value)" />
+            <div class="inline-market-dropdown" id="inlineMarketDropdown"></div>
+            <button class="inline-submit-btn" onclick="submitMarketSearch()" style="margin-top: 8px;">Continue</button>
+        </div>
+    `;
+}
+
+async function generateAIResponse(chat, message) {
+    // Try using Claude API if available
+    if (claudeAPI) {
+        try {
+            // Build conversation history
+            const history = chat.messages.map(msg => ({
+                role: msg.type === 'user' ? 'user' : 'assistant',
+                content: msg.text
+            }));
+
+            const response = await claudeAPI.generateResponse(message, history);
+            return response;
+        } catch (error) {
+            console.error('Claude API failed, using fallback:', error);
+            // Fall back to simulated response
+            return generateFallbackResponse(chat, message);
+        }
+    } else {
+        // Use simulated response
+        return generateFallbackResponse(chat, message);
+    }
+}
+
+function generateFallbackResponse(chat, message) {
+    if (chat.planMode) {
+        // In plan mode, ask clarifying questions with inline inputs
+        if (chat.planAnswers === 0) {
+            return `Great! I'll help you build that trading bot. First, I need to know:\n\n**What market do you want to trade?**\n${createMarketSearchInput()}`;
+        } else if (chat.planAnswers === 1) {
+            return `Excellent! Now let's configure your strategy:\n\n**Risk Management:**\n${createInlineInput('Maximum Position Size ($)', 'maxPosition', '1000', 'number')}${createInlineInput('Daily Loss Limit ($)', 'dailyLossLimit', '500', 'number')}${createInlineSubmitButton('Continue', 'submitRiskManagement()')}`;
+        } else if (chat.planAnswers === 2) {
+            return `Perfect! Next:\n\n**Trading Frequency:**\n${createInlineDropdown('Check frequency', 'tradingFrequency', [
+                {value: '10', label: 'Every 10 seconds'},
+                {value: '30', label: 'Every 30 seconds'},
+                {value: '60', label: 'Every 1 minute'},
+                {value: '300', label: 'Every 5 minutes'}
+            ])}${createInlineSubmitButton('Continue', 'submitTradingFrequency()')}`;
+        } else if (chat.planAnswers === 3) {
+            return `Great! Final question:\n\n**Execution:**\n${createInlineDropdown('Order type', 'orderType', [
+                {value: 'market', label: 'Market orders (execute immediately)'},
+                {value: 'limit', label: 'Limit orders (wait for specific price)'},
+                {value: 'threshold', label: 'Threshold-based (custom conditions)'}
+            ])}${createInlineSubmitButton('Finish Setup', 'submitOrderType()')}`;
+        } else {
+            return `Excellent! I now have all the information I need. Let me generate your custom trading bot...\n\nMarket configured\nStrategy defined\nRisk parameters set\nTrading logic implemented\n\nYour bot code is ready! Check the Code tab on the right to review the implementation. You can export it when you're ready.`;
+        }
+    } else {
+        return generateResponse(message);
+    }
 }
 
 function generateResponse(userMessage) {
@@ -803,8 +906,7 @@ function showMarketSearch() {
     const recommendedMessages = document.getElementById('recommendedMessages');
     if (container) {
         container.style.display = 'block';
-        // Populate with initial suggestions
-        searchMarkets('');
+        // Don't show dropdown until user starts typing
     }
     if (recommendedMessages) {
         recommendedMessages.style.display = 'none';
@@ -822,9 +924,13 @@ function searchMarkets(query) {
     const dropdown = document.getElementById('marketDropdown');
     if (!dropdown) return;
 
-    const filtered = query.trim() === ''
-        ? mockMarkets.slice(0, 5)
-        : mockMarkets.filter(m => m.title.toLowerCase().includes(query.toLowerCase()));
+    // Only show dropdown if user has typed something
+    if (query.trim() === '') {
+        dropdown.classList.remove('visible');
+        return;
+    }
+
+    const filtered = mockMarkets.filter(m => m.title.toLowerCase().includes(query.toLowerCase()));
 
     if (filtered.length === 0) {
         dropdown.innerHTML = '<div class="market-dropdown-item" style="cursor: default;"><div class="market-item-title">No markets found</div></div>';
@@ -860,6 +966,125 @@ function selectMarket(title, price, volume) {
     // Hide market search and send message
     hideMarketSearch();
     setTimeout(() => sendMessage(), 100);
+}
+
+// Inline market search handlers
+function searchInlineMarkets(query) {
+    const dropdown = document.getElementById('inlineMarketDropdown');
+    if (!dropdown) return;
+
+    // Only show dropdown if user has typed something
+    if (query.trim() === '') {
+        dropdown.classList.remove('visible');
+        dropdown.innerHTML = '';
+        return;
+    }
+
+    const filtered = mockMarkets.filter(m => m.title.toLowerCase().includes(query.toLowerCase()));
+
+    if (filtered.length === 0) {
+        dropdown.innerHTML = '<div class="inline-market-item" style="cursor: default;"><div class="market-item-title">No markets found</div></div>';
+        dropdown.classList.add('visible');
+        return;
+    }
+
+    dropdown.innerHTML = filtered.map(market => `
+        <div class="inline-market-item" onclick="selectInlineMarket('${market.title.replace(/'/g, "\\'")}')">
+            <div class="market-item-title">${market.title}</div>
+            <div class="market-item-stats">
+                <span class="market-item-price">${market.price}</span>
+                <span>Vol: ${market.volume}</span>
+                <span>Liq: ${market.liquidity}</span>
+            </div>
+        </div>
+    `).join('');
+
+    dropdown.classList.add('visible');
+}
+
+function selectInlineMarket(title) {
+    const input = document.getElementById('inlineMarketSearch');
+    if (input) input.value = title;
+
+    const dropdown = document.getElementById('inlineMarketDropdown');
+    if (dropdown) {
+        dropdown.classList.remove('visible');
+        dropdown.innerHTML = '';
+    }
+}
+
+function submitMarketSearch() {
+    const input = document.getElementById('inlineMarketSearch');
+    if (!input || !input.value.trim()) {
+        alert('Please enter a market name or link');
+        return;
+    }
+
+    document.getElementById('chatInput').value = input.value;
+    sendMessage();
+}
+
+// Inline form submission handlers
+function submitMarketConfirm() {
+    const select = document.getElementById('marketConfirm');
+    if (!select || !select.value) {
+        alert('Please select an option');
+        return;
+    }
+    const value = select.value === 'yes' ? 'Yes, use this market' : 'No, search for another';
+    document.getElementById('chatInput').value = value;
+    sendMessage();
+}
+
+function submitRiskManagement() {
+    const maxPosition = document.getElementById('maxPosition');
+    const dailyLoss = document.getElementById('dailyLossLimit');
+
+    if (!maxPosition?.value || !dailyLoss?.value) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    const message = `Max position: $${maxPosition.value}, Daily loss limit: $${dailyLoss.value}`;
+    document.getElementById('chatInput').value = message;
+    sendMessage();
+}
+
+function submitTradingFrequency() {
+    const select = document.getElementById('tradingFrequency');
+    if (!select || !select.value) {
+        alert('Please select a frequency');
+        return;
+    }
+
+    const frequencies = {
+        '10': 'Every 10 seconds',
+        '30': 'Every 30 seconds',
+        '60': 'Every 1 minute',
+        '300': 'Every 5 minutes'
+    };
+
+    const message = frequencies[select.value] || select.value;
+    document.getElementById('chatInput').value = message;
+    sendMessage();
+}
+
+function submitOrderType() {
+    const select = document.getElementById('orderType');
+    if (!select || !select.value) {
+        alert('Please select an order type');
+        return;
+    }
+
+    const types = {
+        'market': 'Market orders',
+        'limit': 'Limit orders',
+        'threshold': 'Threshold-based execution'
+    };
+
+    const message = types[select.value] || select.value;
+    document.getElementById('chatInput').value = message;
+    sendMessage();
 }
 
 // Initialize recommendations on load

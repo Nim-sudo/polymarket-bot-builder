@@ -118,6 +118,16 @@ body {
 .btn-primary-solid {
     background: var(--accent-primary);
     color: var(--bg-primary);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    display: inline-block;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    font-size: 14px;
 }
 
 .btn-primary-solid:hover {
