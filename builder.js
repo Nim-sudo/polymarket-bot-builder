@@ -674,11 +674,15 @@ function showWelcomeScreen() {
     const chatMessages = document.getElementById('chatMessages');
     const inputContainer = document.querySelector('.chat-input-container');
     const recommendedMessages = document.getElementById('recommendedMessages');
+    const builderContainer = document.querySelector('.builder-container');
+    const topbar = document.querySelector('.builder-topbar');
 
     if (welcomeScreen) welcomeScreen.classList.remove('hidden');
     if (chatMessages) chatMessages.style.display = 'none';
     if (inputContainer) inputContainer.style.display = 'none';
     if (recommendedMessages) recommendedMessages.style.display = 'none';
+    if (builderContainer) builderContainer.classList.add('welcome-active');
+    if (topbar) topbar.classList.add('welcome-active');
 }
 
 function hideWelcomeScreen() {
@@ -686,11 +690,15 @@ function hideWelcomeScreen() {
     const chatMessages = document.getElementById('chatMessages');
     const inputContainer = document.querySelector('.chat-input-container');
     const recommendedMessages = document.getElementById('recommendedMessages');
+    const builderContainer = document.querySelector('.builder-container');
+    const topbar = document.querySelector('.builder-topbar');
 
     if (welcomeScreen) welcomeScreen.classList.add('hidden');
     if (chatMessages) chatMessages.style.display = 'flex';
     if (inputContainer) inputContainer.style.display = 'flex';
     if (recommendedMessages) recommendedMessages.style.display = 'flex';
+    if (builderContainer) builderContainer.classList.remove('welcome-active');
+    if (topbar) topbar.classList.remove('welcome-active');
 }
 
 function handleWelcomeKeydown(event) {
