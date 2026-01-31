@@ -283,11 +283,16 @@ function sendMessage() {
     // Show scroll button
     showScrollButton();
 
-    // Show generating status
-    updateStatus(chat.planMode ? 'Planning strategy...' : 'Generating code...', true);
+    // Show animated generating status
+    if (chat.planMode) {
+        updateStatusAnimated(['Thinking', 'Strategizing', 'Calculating', 'Pondering', 'Analyzing', 'Planning']);
+    } else {
+        updateStatusAnimated(['Building', 'Coding', 'Generating', 'Crafting', 'Compiling', 'Creating']);
+    }
 
     // Check for API key
     if (!ensureAPIKey()) {
+        stopStatusAnimation();
         updateStatus('API key required', false);
         return;
     }
@@ -296,6 +301,7 @@ function sendMessage() {
     generateAIResponse(chat, message).then(response => {
         // If response is null, modal was shown instead
         if (response === null) {
+            stopStatusAnimation();
             updateStatus('Waiting for your answers...', false);
             return;
         }
@@ -327,9 +333,11 @@ function sendMessage() {
         addMessageToDOM(response, 'assistant');
 
         saveChats();
+        stopStatusAnimation();
         updateStatus('Ready', false);
     }).catch(error => {
         console.error('Error generating response:', error);
+        stopStatusAnimation();
         updateStatus('Error generating response', false);
         alert('Failed to generate response. Please check your API key and try again.');
     });
@@ -579,16 +587,62 @@ function autoResizeTextarea(textarea) {
     textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
 }
 
+let statusAnimationInterval = null;
+
 function updateStatus(text, isGenerating) {
     const statusText = document.querySelector('.status-text');
     const statusIndicator = document.querySelector('.status-indicator');
 
+    // Stop any existing animation
+    if (statusAnimationInterval) {
+        clearInterval(statusAnimationInterval);
+        statusAnimationInterval = null;
+    }
+
+    statusText.classList.remove('animated');
     statusText.textContent = text;
 
     if (isGenerating) {
         statusIndicator.classList.add('generating');
     } else {
         statusIndicator.classList.remove('generating');
+    }
+}
+
+function updateStatusAnimated(words) {
+    const statusText = document.querySelector('.status-text');
+    const statusIndicator = document.querySelector('.status-indicator');
+
+    // Stop any existing animation
+    if (statusAnimationInterval) {
+        clearInterval(statusAnimationInterval);
+    }
+
+    statusText.classList.add('animated');
+    statusIndicator.classList.add('generating');
+
+    let currentIndex = 0;
+
+    function showNextWord() {
+        statusText.innerHTML = `<span class="status-word">${words[currentIndex]}</span>`;
+        currentIndex = (currentIndex + 1) % words.length;
+    }
+
+    // Show first word immediately
+    showNextWord();
+
+    // Rotate through words every 2.5 seconds
+    statusAnimationInterval = setInterval(showNextWord, 2500);
+}
+
+function stopStatusAnimation() {
+    if (statusAnimationInterval) {
+        clearInterval(statusAnimationInterval);
+        statusAnimationInterval = null;
+    }
+    const statusText = document.querySelector('.status-text');
+    if (statusText) {
+        statusText.classList.remove('animated');
     }
 }
 
@@ -886,14 +940,28 @@ function runQuickGuide() {
 // Trending market selection
 function selectTrendingMarket(element) {
     const marketName = element.getAttribute('data-market');
-    const input = document.getElementById('welcomeInput');
-    input.value = marketName + ' - ';
-    input.placeholder = 'Describe the type of bot you want to build...';
-    input.focus();
-    // Move cursor to end
-    setTimeout(() => {
-        input.setSelectionRange(input.value.length, input.value.length);
-    }, 0);
+
+    // Create new chat if needed
+    let chat = getCurrentChat();
+    if (!chat || chat.messages.length > 0) {
+        newChat();
+        chat = getCurrentChat();
+    }
+
+    // Hide welcome screen and show chat
+    hideWelcomeScreen();
+
+    // Add assistant message prompting for bot description
+    const promptMessage = `Great! I see you're interested in "${marketName}". Now describe the type of bot you want to build for this market. Be as specific as possible about your strategy, goals, and any particular features you need.`;
+    chat.messages.push({ type: 'assistant', text: promptMessage });
+    addMessageToDOM(promptMessage, 'assistant');
+    saveChats();
+
+    // Focus on chat input
+    const chatInput = document.getElementById('chatInput');
+    if (chatInput) {
+        chatInput.focus();
+    }
 }
 
 // Polymarket Gamma API Integration (via CORS proxy)
@@ -1036,17 +1104,27 @@ function selectMarket(marketName, marketId) {
     dropdown.classList.remove('visible');
     dropdown.innerHTML = '';
 
-    const input = document.getElementById('welcomeInput');
-    input.value = marketName + ' - ';
-    input.placeholder = 'Describe the type of bot you want to build...';
-    input.focus();
+    // Create new chat if needed
+    let chat = getCurrentChat();
+    if (!chat || chat.messages.length > 0) {
+        newChat();
+        chat = getCurrentChat();
+    }
 
-    // Move cursor to end
-    setTimeout(() => {
-        input.setSelectionRange(input.value.length, input.value.length);
-    }, 0);
+    // Hide welcome screen and show chat
+    hideWelcomeScreen();
 
-    // Don't auto-submit - let user add their description first
+    // Add assistant message prompting for bot description
+    const promptMessage = `Perfect! I see you've selected "${marketName}". Now tell me about the bot you want to build for this market. Describe your strategy, trading approach, risk tolerance, and any specific features you'd like to include.`;
+    chat.messages.push({ type: 'assistant', text: promptMessage });
+    addMessageToDOM(promptMessage, 'assistant');
+    saveChats();
+
+    // Focus on chat input
+    const chatInput = document.getElementById('chatInput');
+    if (chatInput) {
+        chatInput.focus();
+    }
 }
 
 // Trending Markets Carousel
@@ -1060,7 +1138,8 @@ function goToSlide(index) {
     if (!track || !dots.length) return;
 
     currentSlide = index;
-    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    // Slides are 84% width to show partial adjacent cards
+    track.style.transform = `translateX(-${currentSlide * 84}%)`;
 
     dots.forEach((dot, i) => {
         if (i === currentSlide) {
@@ -1574,18 +1653,26 @@ function finishQuestions() {
         chat.planMode = false;
         document.querySelector('.strategy-pane')?.classList.remove('plan-mode');
         document.querySelector('.builder-container')?.classList.remove('plan-mode');
-        
+
+        // Show animated generating status
+        updateStatusAnimated(['Building', 'Coding', 'Generating', 'Crafting', 'Compiling', 'Creating']);
+
         // Generate AI response to create the bot
         generateAIResponse(chat, 'Please generate the complete bot code based on my answers above.').then(response => {
             chat.messages.push({ type: 'assistant', text: response });
             addMessageToDOM(response, 'assistant');
-            
+
             const code = generateBotCode(answerText);
             chat.code = code;
             showCode(code);
-            
+
             saveChats();
+            stopStatusAnimation();
             updateStatus('Ready', false);
+        }).catch(error => {
+            console.error('Error generating bot code:', error);
+            stopStatusAnimation();
+            updateStatus('Error generating code', false);
         });
     }
 }

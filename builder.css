@@ -1088,13 +1088,20 @@
 .trending-carousel-track {
     display: flex;
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0 8%;
 }
 
 .trending-slide {
-    min-width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    min-width: 84%;
+    flex-shrink: 0;
+    display: flex;
     gap: 12px;
+    margin-right: 0;
+}
+
+.trending-market {
+    flex: 0 0 calc((100% - 36px) / 4);
+    min-width: 0;
 }
 
 .carousel-arrow {
@@ -1684,6 +1691,35 @@
     }
     50% {
         opacity: 0.5;
+    }
+}
+
+.status-text.animated {
+    font-weight: 600;
+    color: var(--accent-primary);
+}
+
+.status-text.animated .status-word {
+    display: inline-block;
+    animation: fadeInOut 2.5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    20% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    80% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-5px);
     }
 }
 
