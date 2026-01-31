@@ -27,7 +27,7 @@ function searchChats() {
 }
 
 function openSettings() {
-    alert('Settings coming soon! Here you\'ll manage:\n- Theme preferences\n- Notification settings\n- Export options\n- API preferences');
+    window.location.href = 'settings.html';
 }
 
 function newChat() {
@@ -151,6 +151,8 @@ function loadChat(chatId) {
 
 function saveChats() {
     localStorage.setItem('chats', JSON.stringify(chats));
+    lastSaveTime = Date.now();
+    updateAutosaveStatus();
 }
 
 function getCurrentChat() {
@@ -449,7 +451,7 @@ function exportBot() {
 }
 
 function openAccount() {
-    alert('Account settings coming soon! Here you\'ll manage:\n- Profile information\n- API credentials\n- Notification preferences\n- Subscription and billing\n- Security settings\n- Sign out');
+    window.location.href = 'account.html';
 }
 
 function logout() {
@@ -458,42 +460,43 @@ function logout() {
 }
 
 // Autosave functionality
-let autosaveEnabled = localStorage.getItem('autosaveEnabled') !== 'false';
+let lastSaveTime = Date.now();
 let autosaveInterval = null;
-
-function toggleAutosave(enabled) {
-    autosaveEnabled = enabled;
-    localStorage.setItem('autosaveEnabled', enabled);
-
-    if (enabled) {
-        startAutosave();
-    } else {
-        stopAutosave();
-    }
-}
 
 function startAutosave() {
     if (autosaveInterval) return;
 
+    // Autosave every 90 seconds (1.5 minutes)
     autosaveInterval = setInterval(() => {
-        if (currentChatId && autosaveEnabled) {
+        if (currentChatId) {
             saveChats();
-            console.log('Autosaved');
+            lastSaveTime = Date.now();
+            updateAutosaveStatus();
         }
-    }, 30000); // Autosave every 30 seconds
+    }, 90000);
+
+    // Update status text every 30 seconds
+    setInterval(updateAutosaveStatus, 30000);
 }
 
-function stopAutosave() {
-    if (autosaveInterval) {
-        clearInterval(autosaveInterval);
-        autosaveInterval = null;
+function updateAutosaveStatus() {
+    const statusEl = document.getElementById('autosaveStatus');
+    if (!statusEl) return;
+
+    const elapsed = Date.now() - lastSaveTime;
+    const minutes = Math.floor(elapsed / 60000);
+
+    if (minutes === 0) {
+        statusEl.textContent = 'Last saved just now';
+    } else if (minutes === 1) {
+        statusEl.textContent = 'Last saved 1 min ago';
+    } else {
+        statusEl.textContent = `Last saved ${minutes} mins ago`;
     }
 }
 
 // Initialize autosave on load
-if (autosaveEnabled) {
-    startAutosave();
-}
+startAutosave();
 
 // Code panel functions
 function switchTab(tab) {
@@ -533,3 +536,25 @@ document.getElementById('botName')?.addEventListener('blur', function() {
         loadChats();
     }
 });
+
+// Right pane tab switching
+function switchRightTab(tabName) {
+    // Update toggle buttons
+    const toggleButtons = document.querySelectorAll('.toggle-option');
+    toggleButtons.forEach(btn => btn.classList.remove('active'));
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
+
+    // Update tab content
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.classList.remove('active'));
+
+    if (tabName === 'summary') {
+        document.getElementById('summaryTab').classList.add('active');
+    } else if (tabName === 'market') {
+        document.getElementById('marketTab').classList.add('active');
+    } else if (tabName === 'code') {
+        document.getElementById('codeTab').classList.add('active');
+    }
+}

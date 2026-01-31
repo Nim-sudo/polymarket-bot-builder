@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - PolyBot Builder</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="32" height="32" rx="8" fill="url(#gradient)"/>
+                        <path d="M16 8L24 12V20L16 24L8 20V12L16 8Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 16L24 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 16V24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 16L8 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32">
+                                <stop offset="0%" stop-color="#00FFA3"/>
+                                <stop offset="100%" stop-color="#00B8D4"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span>PolyBot Builder</span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="builder.html">Builder</a>
+                </div>
+                <div class="nav-actions">
+                    <div class="user-menu">
+                        <span class="user-email">user@example.com</span>
+                        <button class="btn-secondary" onclick="logout()">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Account Content -->
+    <section class="dashboard-main">
+        <div class="container">
+            <div class="dashboard-header">
+                <div>
+                    <h1>Account</h1>
+                    <p>Manage your profile and subscription</p>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Profile Information</h2>
+                    </div>
+                    <div class="account-info">
+                        <div class="info-row">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">user@example.com</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Member Since</span>
+                            <span class="info-value">January 2026</span>
+                        </div>
+                    </div>
+                    <div class="account-actions">
+                        <button class="btn-outline btn-full" onclick="alert('Profile editing coming soon!')">Edit Profile</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Subscription</h2>
+                    </div>
+                    <div class="account-info">
+                        <div class="info-row">
+                            <span class="info-label">Plan</span>
+                            <span class="info-value">
+                                <span class="badge-pro">Pro - $30/mo</span>
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Next Billing</span>
+                            <span class="info-value">Feb 30, 2026</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Payment Method</span>
+                            <span class="info-value">•••• 4242</span>
+                        </div>
+                    </div>
+                    <div class="account-actions">
+                        <button class="btn-secondary btn-full" onclick="alert('Billing management coming soon!')">Manage Subscription</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-card full-width">
+                    <div class="card-header">
+                        <h2>API Credentials</h2>
+                    </div>
+                    <div class="account-info">
+                        <div class="info-row">
+                            <span class="info-label">Platform API Key</span>
+                            <span class="info-value mono">pb_••••••••••••••</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Status</span>
+                            <span class="info-value">Active</span>
+                        </div>
+                    </div>
+                    <div class="account-actions">
+                        <button class="btn-outline btn-full" onclick="alert('API key regeneration coming soon!')">Regenerate API Key</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-card full-width">
+                    <div class="card-header">
+                        <h2>Security</h2>
+                    </div>
+                    <div class="account-info">
+                        <div class="info-row">
+                            <span class="info-label">Password</span>
+                            <span class="info-value">••••••••</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Two-Factor Auth</span>
+                            <span class="info-value">Disabled</span>
+                        </div>
+                    </div>
+                    <div class="account-actions">
+                        <button class="btn-outline btn-full" onclick="alert('Password change coming soon!')">Change Password</button>
+                        <button class="btn-outline btn-full" onclick="alert('2FA setup coming soon!')">Enable 2FA</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-card full-width">
+                    <div class="card-header">
+                        <h2>Danger Zone</h2>
+                    </div>
+                    <div class="account-actions">
+                        <button class="btn-outline btn-full" style="color: #ff5555; border-color: #ff5555;" onclick="logout()">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        if (!localStorage.getItem('isLoggedIn')) {
+            window.location.href = 'index.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

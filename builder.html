@@ -92,11 +92,7 @@
                 <input type="text" id="botName" class="bot-name-input" placeholder="Untitled Bot" />
             </div>
             <div class="topbar-right">
-                <label class="autosave-toggle">
-                    <input type="checkbox" id="autosaveToggle" checked onchange="toggleAutosave(this.checked)">
-                    <span class="toggle-slider"></span>
-                    <span class="toggle-label">Autosave</span>
-                </label>
+                <span class="autosave-status" id="autosaveStatus">Last saved just now</span>
                 <button class="btn-secondary btn-small" onclick="saveDraft()">Save Draft</button>
                 <button class="btn-primary btn-small" onclick="exportBot()">Export Bot</button>
             </div>
@@ -133,35 +129,168 @@
                 </div>
             </div>
 
-            <!-- Right Pane: Code -->
-            <div class="builder-pane code-pane">
+            <!-- Right Pane: Strategy View -->
+            <div class="builder-pane strategy-pane">
                 <div class="pane-header">
-                    <div class="header-tabs">
-                        <button class="tab active" onclick="switchTab('code')">Code</button>
-                        <button class="tab" onclick="switchTab('preview')">Preview</button>
-                    </div>
-                    <div class="code-actions">
-                        <button class="btn-icon" onclick="copyCode()" title="Copy code">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <rect x="5" y="5" width="9" height="9" rx="1"/>
-                                <path d="M3 11V3a1 1 0 011-1h8"/>
-                            </svg>
-                        </button>
+                    <div class="tab-toggle">
+                        <button class="toggle-option active" onclick="switchRightTab('summary')">Summary</button>
+                        <button class="toggle-option" onclick="switchRightTab('market')">Market</button>
+                        <button class="toggle-option" onclick="switchRightTab('code')">Code</button>
                     </div>
                 </div>
-                <div class="code-content" id="codeContent">
-                    <div class="code-placeholder">
-                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="16 18 22 24 16 30"/>
-                            <polyline points="32 18 26 24 32 30"/>
-                        </svg>
-                        <p>Your bot code will appear here</p>
-                        <span>Start by describing your strategy in the chat</span>
+
+                <!-- Summary Tab -->
+                <div class="tab-content active" id="summaryTab">
+                    <div class="strategy-content">
+                        <!-- Market Preview Card -->
+                        <div class="glass-card market-preview-card" onclick="switchRightTab('market')">
+                            <div class="card-header-inline">
+                                <h3>Market Preview</h3>
+                                <button class="btn-text-small" onclick="event.stopPropagation(); switchRightTab('market')">Open Market tab →</button>
+                            </div>
+                            <div class="market-mini-chart">
+                                <canvas id="miniSparkline" width="300" height="60"></canvas>
+                            </div>
+                            <div class="book-snapshot">
+                                <div class="book-item"><span class="label">Bid:</span> <span class="value">0.52</span></div>
+                                <div class="book-item"><span class="label">Ask:</span> <span class="value">0.54</span></div>
+                                <div class="book-item"><span class="label">Mid:</span> <span class="value">0.53</span></div>
+                                <div class="book-item"><span class="label">Last:</span> <span class="value">0.53</span></div>
+                                <div class="book-item"><span class="label">Spread:</span> <span class="value">0.02</span></div>
+                                <div class="book-item"><span class="label">Volume:</span> <span class="value">$12.5K</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Bot Spec -->
+                        <div class="glass-card">
+                            <h3>Bot Spec</h3>
+
+                            <div class="spec-row">
+                                <span class="spec-label">Trigger</span>
+                                <div class="spec-values">
+                                    <span>Type: --</span>
+                                    <span>Cadence: -- seconds</span>
+                                    <span>Data: Not set</span>
+                                </div>
+                            </div>
+
+                            <div class="spec-section">
+                                <div class="spec-section-header">
+                                    <span>Entry Rules</span>
+                                    <button class="btn-icon-small">+</button>
+                                </div>
+                                <div class="rule-placeholder">No entry rules defined</div>
+                            </div>
+
+                            <div class="spec-section">
+                                <div class="spec-section-header">
+                                    <span>Exit Rules</span>
+                                    <button class="btn-icon-small">+</button>
+                                </div>
+                                <div class="rule-placeholder">No exit rules defined</div>
+                            </div>
+
+                            <div class="spec-row">
+                                <span class="spec-label">Sizing</span>
+                                <div class="spec-values">
+                                    <span>Mode: --</span>
+                                    <span>Amount: --</span>
+                                    <span>Max position: --</span>
+                                </div>
+                            </div>
+
+                            <div class="spec-row">
+                                <span class="spec-label">Risk Controls</span>
+                                <div class="spec-values">
+                                    <span>Max trades/day: --</span>
+                                    <span>Daily loss cap: --</span>
+                                    <span>Cooldown: --</span>
+                                    <span>Max spread: --</span>
+                                    <span>Slippage guard: --</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Connectors -->
+                        <div class="glass-card">
+                            <h3>Connectors</h3>
+                            <div class="connector-list">
+                                <label class="connector-toggle">
+                                    <input type="checkbox" checked disabled>
+                                    <span>Polymarket</span>
+                                </label>
+                                <label class="connector-toggle">
+                                    <input type="checkbox">
+                                    <span>RSS</span>
+                                </label>
+                                <label class="connector-toggle">
+                                    <input type="checkbox">
+                                    <span>Weather</span>
+                                </label>
+                                <label class="connector-toggle">
+                                    <input type="checkbox">
+                                    <span>X (Twitter)</span>
+                                </label>
+                                <label class="connector-toggle">
+                                    <input type="checkbox">
+                                    <span>Reddit</span>
+                                </label>
+                            </div>
+                            <div class="connector-secrets">
+                                <span class="spec-label">Required secrets:</span>
+                                <span>1 (Polymarket API key)</span>
+                            </div>
+                        </div>
+
+                        <!-- Validation -->
+                        <div class="glass-card">
+                            <h3>Validation</h3>
+                            <div class="validation-chips">
+                                <span class="chip chip-missing">3 Missing</span>
+                                <span class="chip chip-warning">1 Warning</span>
+                                <span class="chip chip-error">0 Errors</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="code-status">
-                    <span class="status-indicator"></span>
-                    <span class="status-text">Ready</span>
+
+                <!-- Market Tab -->
+                <div class="tab-content" id="marketTab">
+                    <div class="strategy-content">
+                        <div class="glass-card">
+                            <h3>Market Selection</h3>
+                            <p>Market search and full probability chart will appear here.</p>
+                            <button class="btn-primary">Use this market</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Tab -->
+                <div class="tab-content" id="codeTab">
+                    <div class="strategy-content">
+                        <div class="code-header-actions">
+                            <button class="btn-icon" onclick="copyCode()" title="Copy code">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <rect x="5" y="5" width="9" height="9" rx="1"/>
+                                    <path d="M3 11V3a1 1 0 011-1h8"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="code-content" id="codeContent">
+                            <div class="code-placeholder">
+                                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="16 18 22 24 16 30"/>
+                                    <polyline points="32 18 26 24 32 30"/>
+                                </svg>
+                                <p>Your bot code will appear here</p>
+                                <span>Start by describing your strategy in the chat</span>
+                            </div>
+                        </div>
+                        <div class="code-status">
+                            <span class="status-indicator"></span>
+                            <span class="status-text">Ready</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
