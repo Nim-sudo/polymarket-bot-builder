@@ -890,6 +890,150 @@ function selectTrendingMarket(element) {
     document.getElementById('welcomeInput').focus();
 }
 
+// Polymarket Gamma API Integration
+const GAMMA_API_BASE = 'https://gamma-api.polymarket.com';
+let searchTimeout = null;
+
+async function searchWelcomeMarkets(query) {
+    const dropdown = document.getElementById('welcomeMarketDropdown');
+
+    if (!query || query.trim().length < 2) {
+        dropdown.classList.remove('visible');
+        dropdown.innerHTML = '';
+        return;
+    }
+
+    // Debounce search
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(async () => {
+        try {
+            // Check if it's a Polymarket link
+            if (query.includes('polymarket.com')) {
+                // Extract slug from URL and search for it
+                const slug = extractSlugFromUrl(query);
+                if (slug) {
+                    await searchBySlug(slug, dropdown);
+                    return;
+                }
+            }
+
+            // Search by keyword
+            await searchByKeyword(query, dropdown);
+        } catch (error) {
+            console.error('Market search error:', error);
+            dropdown.innerHTML = '<div class="market-search-error">Unable to fetch markets. Please try again.</div>';
+            dropdown.classList.add('visible');
+        }
+    }, 300);
+}
+
+function extractSlugFromUrl(url) {
+    const match = url.match(/polymarket\.com\/event\/([^/?]+)/);
+    return match ? match[1] : null;
+}
+
+async function searchBySlug(slug, dropdown) {
+    const response = await fetch(`${GAMMA_API_BASE}/events?slug=${slug}`);
+    const data = await response.json();
+
+    if (data && data.length > 0) {
+        displayMarketResults([data[0]], dropdown);
+    } else {
+        dropdown.innerHTML = '<div class="market-search-empty">No market found with that link.</div>';
+        dropdown.classList.add('visible');
+    }
+}
+
+async function searchByKeyword(query, dropdown) {
+    // Search active markets
+    const response = await fetch(`${GAMMA_API_BASE}/markets?limit=10&active=true&closed=false`);
+    const data = await response.json();
+
+    if (!data || data.length === 0) {
+        dropdown.innerHTML = '<div class="market-search-empty">No active markets found.</div>';
+        dropdown.classList.add('visible');
+        return;
+    }
+
+    // Filter by query
+    const queryLower = query.toLowerCase();
+    const filtered = data.filter(market =>
+        market.question?.toLowerCase().includes(queryLower) ||
+        market.description?.toLowerCase().includes(queryLower)
+    ).slice(0, 8);
+
+    if (filtered.length > 0) {
+        displayMarketResults(filtered, dropdown);
+    } else {
+        dropdown.innerHTML = '<div class="market-search-empty">No markets match your search.</div>';
+        dropdown.classList.add('visible');
+    }
+}
+
+function displayMarketResults(markets, dropdown) {
+    let html = '';
+
+    markets.forEach(market => {
+        const endDate = market.endDate ? new Date(market.endDate).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        }) : 'TBD';
+
+        const volume = market.volume ? formatVolume(market.volume) : 'N/A';
+        const liquidity = market.liquidity ? parseFloat(market.liquidity) > 1000 : false;
+        const liquidityBadge = liquidity ? '<span class="market-liquidity-badge yes">High Liquidity</span>' : '<span class="market-liquidity-badge no">Low Liquidity</span>';
+
+        const prices = market.outcomePrices ? JSON.parse(market.outcomePrices) : null;
+        const priceDisplay = prices && prices.length > 0 ? `${(parseFloat(prices[0]) * 100).toFixed(0)}¢ Yes` : '';
+
+        html += `
+            <div class="market-search-card" onclick="selectMarket('${escapeHtml(market.question)}', '${market.id}')">
+                <div class="market-card-header">
+                    <div class="market-card-title">${escapeHtml(market.question)}</div>
+                    ${priceDisplay ? `<div class="market-card-price">${priceDisplay}</div>` : ''}
+                </div>
+                <div class="market-card-meta">
+                    <span class="market-card-date">Ends ${endDate}</span>
+                    <span class="market-card-volume">${volume} vol</span>
+                    ${liquidityBadge}
+                </div>
+                <button class="market-card-select" onclick="event.stopPropagation(); selectMarket('${escapeHtml(market.question)}', '${market.id}')">
+                    Select Market
+                </button>
+            </div>
+        `;
+    });
+
+    dropdown.innerHTML = html;
+    dropdown.classList.add('visible');
+}
+
+function formatVolume(volume) {
+    const num = parseFloat(volume);
+    if (num >= 1000000) {
+        return `$${(num / 1000000).toFixed(1)}M`;
+    } else if (num >= 1000) {
+        return `$${(num / 1000).toFixed(0)}K`;
+    }
+    return `$${num.toFixed(0)}`;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function selectMarket(marketName, marketId) {
+    const dropdown = document.getElementById('welcomeMarketDropdown');
+    dropdown.classList.remove('visible');
+    dropdown.innerHTML = '';
+
+    document.getElementById('welcomeInput').value = `Build a trading bot for: ${marketName}`;
+    sendFromWelcome();
+}
+
 // Trending Markets Carousel
 let currentSlide = 0;
 let carouselInterval = null;
@@ -916,6 +1060,23 @@ function nextSlide() {
     const totalSlides = 3;
     currentSlide = (currentSlide + 1) % totalSlides;
     goToSlide(currentSlide);
+}
+
+function prevSlide() {
+    const totalSlides = 3;
+    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+    goToSlide(currentSlide);
+    restartCarousel();
+}
+
+function nextSlideManual() {
+    nextSlide();
+    restartCarousel();
+}
+
+function restartCarousel() {
+    stopCarousel();
+    startCarousel();
 }
 
 function startCarousel() {

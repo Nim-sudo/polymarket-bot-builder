@@ -38,11 +38,11 @@
         </div>
 
         <div class="sidebar-actions">
-            <button class="sidebar-action-item" onclick="newChat()" title="New chat">
+            <button class="sidebar-action-item" onclick="newChat()" title="New bot">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M4 10h12M10 4v12"/>
                 </svg>
-                <span class="sidebar-label">New chat</span>
+                <span class="sidebar-label">New Bot</span>
             </button>
             <button class="sidebar-action-item" onclick="searchChats()" title="Search chats">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
@@ -120,8 +120,9 @@
                                 type="text"
                                 id="welcomeInput"
                                 class="welcome-input"
-                                placeholder="Describe your trading strategy..."
+                                placeholder="Paste link or search"
                                 onkeydown="handleWelcomeKeydown(event)"
+                                oninput="searchWelcomeMarkets(this.value)"
                             />
                             <button class="btn-send-welcome" onclick="sendFromWelcome()" title="Send">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -129,14 +130,15 @@
                                 </svg>
                             </button>
                         </div>
-                        <div class="welcome-examples">
-                            <button class="welcome-example" onclick="useWelcomeExample(this)">Create an arbitrage bot</button>
-                            <button class="welcome-example" onclick="useWelcomeExample(this)">Build a market maker</button>
-                            <button class="welcome-example" onclick="useWelcomeExample(this)">News-driven trading bot</button>
-                        </div>
+                        <div class="welcome-market-dropdown" id="welcomeMarketDropdown"></div>
                         <div class="trending-markets">
                             <h3 class="trending-title">Trending Markets</h3>
                             <div class="trending-carousel">
+                                <button class="carousel-arrow carousel-arrow-left" onclick="prevSlide()" aria-label="Previous slide">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                                        <path d="M12 4 L6 10 L12 16"/>
+                                    </svg>
+                                </button>
                                 <div class="trending-carousel-track" id="trendingCarouselTrack">
                                     <!-- Slide 1 -->
                                     <div class="trending-slide">
@@ -232,6 +234,11 @@
                                         </div>
                                     </div>
                                 </div>
+                                <button class="carousel-arrow carousel-arrow-right" onclick="nextSlideManual()" aria-label="Next slide">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                                        <path d="M8 4 L14 10 L8 16"/>
+                                    </svg>
+                                </button>
                                 <div class="carousel-dots" id="carouselDots">
                                     <div class="carousel-dot active" onclick="goToSlide(0)"></div>
                                     <div class="carousel-dot" onclick="goToSlide(1)"></div>
