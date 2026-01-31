@@ -895,7 +895,7 @@
     width: 36px;
     height: 36px;
     padding: 0;
-    background: #5ED64E;
+    background: white;
     color: #0A0E14;
     border: none;
     border-radius: 50%;
@@ -905,13 +905,11 @@
     justify-content: center;
     transition: var(--transition);
     flex-shrink: 0;
-    box-shadow: 0 0 20px rgba(94, 214, 78, 0.5);
 }
 
 .btn-send-welcome:hover {
-    background: #96EE8F;
+    background: #f0f0f0;
     transform: scale(1.05);
-    box-shadow: 0 0 30px rgba(150, 238, 143, 0.6);
 }
 
 .welcome-examples {
@@ -1361,7 +1359,7 @@
     width: 32px;
     height: 32px;
     padding: 0;
-    background: #5ED64E;
+    background: white;
     color: #0A0E14;
     border: none;
     border-radius: 50%;
@@ -1371,13 +1369,11 @@
     justify-content: center;
     transition: var(--transition);
     flex-shrink: 0;
-    box-shadow: 0 0 20px rgba(94, 214, 78, 0.5);
 }
 
 .btn-send:hover {
-    background: #96EE8F;
+    background: #f0f0f0;
     transform: scale(1.05);
-    box-shadow: 0 0 30px rgba(150, 238, 143, 0.6);
 }
 
 .btn-send:disabled {
