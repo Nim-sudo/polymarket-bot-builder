@@ -283,6 +283,9 @@ function sendMessage() {
     // Show scroll button
     showScrollButton();
 
+    // Show AI thinking animation in chat
+    showAIThinking();
+
     // Show animated generating status
     if (chat.planMode) {
         updateStatusAnimated(['Thinking', 'Strategizing', 'Calculating', 'Pondering', 'Analyzing', 'Planning']);
@@ -292,6 +295,7 @@ function sendMessage() {
 
     // Check for API key
     if (!ensureAPIKey()) {
+        removeAIThinking();
         stopStatusAnimation();
         updateStatus('API key required', false);
         return;
@@ -299,8 +303,11 @@ function sendMessage() {
 
     // Generate AI response
     generateAIResponse(chat, message).then(response => {
+        // Remove thinking animation
+        removeAIThinking();
         // If response is null, modal was shown instead
         if (response === null) {
+            removeAIThinking();
             stopStatusAnimation();
             updateStatus('Waiting for your answers...', false);
             return;
@@ -337,6 +344,7 @@ function sendMessage() {
         updateStatus('Ready', false);
     }).catch(error => {
         console.error('Error generating response:', error);
+        removeAIThinking();
         stopStatusAnimation();
         updateStatus('Error generating response', false);
         alert('Failed to generate response. Please check your API key and try again.');
@@ -359,6 +367,68 @@ function addMessageToDOM(text, type) {
     messageDiv.appendChild(contentDiv);
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// AI Thinking Animation
+let thinkingElement = null;
+let thinkingInterval = null;
+const thinkingVerbs = ['Analyzing', 'Building', 'Coding', 'Thinking', 'Planning', 'Writing', 'Deciding', 'Crafting'];
+let currentVerbIndex = 0;
+
+function showAIThinking() {
+    const messagesContainer = document.getElementById('chatMessages');
+
+    // Remove existing thinking element if any
+    removeAIThinking();
+
+    // Create thinking element
+    thinkingElement = document.createElement('div');
+    thinkingElement.className = 'ai-thinking';
+    thinkingElement.id = 'aiThinking';
+
+    const textSpan = document.createElement('div');
+    textSpan.className = 'ai-thinking-text';
+    thinkingElement.appendChild(textSpan);
+
+    const dotsDiv = document.createElement('div');
+    dotsDiv.className = 'ai-thinking-dots';
+    dotsDiv.innerHTML = '<div class="ai-thinking-dot"></div><div class="ai-thinking-dot"></div><div class="ai-thinking-dot"></div>';
+    thinkingElement.appendChild(dotsDiv);
+
+    messagesContainer.appendChild(thinkingElement);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    // Start cycling through verbs
+    updateThinkingVerb();
+    thinkingInterval = setInterval(updateThinkingVerb, 2000);
+}
+
+function updateThinkingVerb() {
+    if (!thinkingElement) return;
+
+    const textSpan = thinkingElement.querySelector('.ai-thinking-text');
+    const verb = thinkingVerbs[currentVerbIndex];
+
+    // Split into letters with wave animation
+    textSpan.innerHTML = verb.split('').map((letter, index) =>
+        `<span class="ai-thinking-letter" style="animation-delay: ${index * 0.1}s">${letter}</span>`
+    ).join('');
+
+    currentVerbIndex = (currentVerbIndex + 1) % thinkingVerbs.length;
+}
+
+function removeAIThinking() {
+    if (thinkingInterval) {
+        clearInterval(thinkingInterval);
+        thinkingInterval = null;
+    }
+
+    if (thinkingElement && thinkingElement.parentNode) {
+        thinkingElement.remove();
+    }
+
+    thinkingElement = null;
+    currentVerbIndex = 0;
 }
 
 function formatMessage(text) {
