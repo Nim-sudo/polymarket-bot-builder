@@ -1052,7 +1052,7 @@ function selectTrendingMarket(element) {
     hideWelcomeScreen();
 
     // Add assistant message prompting for bot description
-    const promptMessage = `Great! I see you're interested in "${marketName}". Now describe the type of bot you want to build for this market. Be as specific as possible about your strategy, goals, and any particular features you need.`;
+    const promptMessage = `Got it! You've selected: **${marketName}**\n\nNow describe your bot the best you can. What's your trading strategy, goals, and any specific features you want?`;
     chat.messages.push({ type: 'assistant', text: promptMessage });
     addMessageToDOM(promptMessage, 'assistant');
     saveChats();
@@ -1248,7 +1248,7 @@ function selectMarket(marketName, marketId) {
     hideWelcomeScreen();
 
     // Add assistant message prompting for bot description
-    const promptMessage = `Perfect! I see you've selected "${marketName}". Now tell me about the bot you want to build for this market. Describe your strategy, trading approach, risk tolerance, and any specific features you'd like to include.`;
+    const promptMessage = `Got it! You've selected: **${marketName}**\n\nNow describe your bot the best you can. What's your trading strategy, goals, and any specific features you want?`;
     chat.messages.push({ type: 'assistant', text: promptMessage });
     addMessageToDOM(promptMessage, 'assistant');
     saveChats();
