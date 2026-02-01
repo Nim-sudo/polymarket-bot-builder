@@ -1225,8 +1225,17 @@ function escapeHtml(text) {
 
 function selectMarket(marketName, marketId) {
     const dropdown = document.getElementById('welcomeMarketDropdown');
+    const welcomeInput = document.getElementById('welcomeInput');
+
     dropdown.classList.remove('visible');
     dropdown.innerHTML = '';
+    welcomeDropdownResults = [];
+    welcomeDropdownActiveIndex = -1;
+
+    // Clear the welcome input
+    if (welcomeInput) {
+        welcomeInput.value = '';
+    }
 
     // Create new chat if needed
     let chat = getCurrentChat();
