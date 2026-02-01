@@ -864,9 +864,109 @@ function hideWelcomeScreen() {
 }
 
 function handleWelcomeKeydown(event) {
+    const dropdown = document.getElementById('welcomeMarketDropdown');
+    const isDropdownVisible = dropdown.classList.contains('visible');
+
+    // Handle keyboard navigation when dropdown is visible
+    if (isDropdownVisible && welcomeDropdownResults.length > 0) {
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            welcomeDropdownActiveIndex = Math.min(welcomeDropdownActiveIndex + 1, welcomeDropdownResults.length - 1);
+            updateWelcomeDropdownHighlight();
+            return;
+        } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            welcomeDropdownActiveIndex = Math.max(welcomeDropdownActiveIndex - 1, -1);
+            updateWelcomeDropdownHighlight();
+            return;
+        } else if (event.key === 'Enter') {
+            event.preventDefault();
+            if (welcomeDropdownActiveIndex >= 0) {
+                // Select the highlighted item
+                const selectedMarket = welcomeDropdownResults[welcomeDropdownActiveIndex];
+                selectMarket(selectedMarket.question, selectedMarket.id);
+            } else if (welcomeDropdownResults.length > 0) {
+                // Select the first item if nothing is highlighted
+                const firstMarket = welcomeDropdownResults[0];
+                selectMarket(firstMarket.question, firstMarket.id);
+            } else {
+                sendFromWelcome();
+            }
+            return;
+        } else if (event.key === 'Escape') {
+            event.preventDefault();
+            dropdown.classList.remove('visible');
+            dropdown.innerHTML = '';
+            welcomeDropdownResults = [];
+            welcomeDropdownActiveIndex = -1;
+            return;
+        }
+    }
+
+    // Default behavior: send on Enter
     if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         sendFromWelcome();
+    }
+}
+
+function updateWelcomeDropdownHighlight() {
+    const dropdown = document.getElementById('welcomeMarketDropdown');
+    const cards = dropdown.querySelectorAll('.market-search-card');
+
+    cards.forEach((card, index) => {
+        if (index === welcomeDropdownActiveIndex) {
+            card.classList.add('keyboard-active');
+            card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        } else {
+            card.classList.remove('keyboard-active');
+        }
+    });
+}
+
+function handleWelcomePaste(event) {
+    // Get pasted text
+    setTimeout(() => {
+        const input = event.target;
+        const pastedText = input.value;
+
+        // Check if it's a Polymarket link
+        if (pastedText.includes('polymarket.com') && pastedText.includes('event')) {
+            // Extract slug and immediately search
+            const slug = extractSlugFromUrl(pastedText);
+            if (slug) {
+                const dropdown = document.getElementById('welcomeMarketDropdown');
+                dropdown.innerHTML = '<div class="market-search-loading">Loading market from link...</div>';
+                dropdown.classList.add('visible');
+
+                // Cancel any inflight requests
+                if (searchAbortController) {
+                    searchAbortController.abort();
+                }
+                searchAbortController = new AbortController();
+
+                searchBySlug(slug, dropdown, searchAbortController.signal).catch(error => {
+                    if (error.name !== 'AbortError') {
+                        console.error('Error loading market from link:', error);
+                        dropdown.innerHTML = '<div class="market-search-error">Invalid Polymarket link. Please check the URL and try again.</div>';
+                    }
+                });
+            }
+        }
+    }, 10);
+}
+
+function handleWelcomeClickOutside(event) {
+    const dropdown = document.getElementById('welcomeMarketDropdown');
+    const input = document.getElementById('welcomeInput');
+    const inputContainer = document.querySelector('.welcome-input-container');
+
+    if (!dropdown || !input || !inputContainer) return;
+
+    // Check if click is outside the input container
+    if (!inputContainer.contains(event.target)) {
+        dropdown.classList.remove('visible');
+        welcomeDropdownActiveIndex = -1;
     }
 }
 
@@ -967,6 +1067,9 @@ function selectTrendingMarket(element) {
 // Polymarket Gamma API Integration (via CORS proxy)
 const GAMMA_API_PROXY = '/api/polymarket';
 let searchTimeout = null;
+let searchAbortController = null;
+let welcomeDropdownActiveIndex = -1;
+let welcomeDropdownResults = [];
 
 async function searchWelcomeMarkets(query) {
     const dropdown = document.getElementById('welcomeMarketDropdown');
@@ -974,31 +1077,47 @@ async function searchWelcomeMarkets(query) {
     if (!query || query.trim().length < 2) {
         dropdown.classList.remove('visible');
         dropdown.innerHTML = '';
+        welcomeDropdownResults = [];
+        welcomeDropdownActiveIndex = -1;
         return;
     }
+
+    // Cancel any inflight requests
+    if (searchAbortController) {
+        searchAbortController.abort();
+    }
+    searchAbortController = new AbortController();
 
     // Debounce search
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(async () => {
         try {
+            // Show loading state
+            dropdown.innerHTML = '<div class="market-search-loading">Searching markets...</div>';
+            dropdown.classList.add('visible');
+
             // Check if it's a Polymarket link
             if (query.includes('polymarket.com')) {
                 // Extract slug from URL and search for it
                 const slug = extractSlugFromUrl(query);
                 if (slug) {
-                    await searchBySlug(slug, dropdown);
+                    await searchBySlug(slug, dropdown, searchAbortController.signal);
                     return;
                 }
             }
 
             // Search by keyword
-            await searchByKeyword(query, dropdown);
+            await searchByKeyword(query, dropdown, searchAbortController.signal);
         } catch (error) {
+            if (error.name === 'AbortError') {
+                // Request was cancelled, ignore
+                return;
+            }
             console.error('Market search error:', error);
             dropdown.innerHTML = '<div class="market-search-error">Unable to fetch markets. Please try again.</div>';
             dropdown.classList.add('visible');
         }
-    }, 300);
+    }, 250);
 }
 
 function extractSlugFromUrl(url) {
@@ -1006,24 +1125,26 @@ function extractSlugFromUrl(url) {
     return match ? match[1] : null;
 }
 
-async function searchBySlug(slug, dropdown) {
-    const response = await fetch(`${GAMMA_API_PROXY}?path=/events&slug=${slug}`);
+async function searchBySlug(slug, dropdown, signal) {
+    const response = await fetch(`${GAMMA_API_PROXY}?path=/events&slug=${slug}`, { signal });
     const data = await response.json();
 
     if (data && data.length > 0) {
         displayMarketResults([data[0]], dropdown);
     } else {
+        welcomeDropdownResults = [];
         dropdown.innerHTML = '<div class="market-search-empty">No market found with that link.</div>';
         dropdown.classList.add('visible');
     }
 }
 
-async function searchByKeyword(query, dropdown) {
+async function searchByKeyword(query, dropdown, signal) {
     // Search active markets
-    const response = await fetch(`${GAMMA_API_PROXY}?path=/markets&limit=10&active=true&closed=false`);
+    const response = await fetch(`${GAMMA_API_PROXY}?path=/markets&limit=10&active=true&closed=false`, { signal });
     const data = await response.json();
 
     if (!data || data.length === 0) {
+        welcomeDropdownResults = [];
         dropdown.innerHTML = '<div class="market-search-empty">No active markets found.</div>';
         dropdown.classList.add('visible');
         return;
@@ -1039,15 +1160,18 @@ async function searchByKeyword(query, dropdown) {
     if (filtered.length > 0) {
         displayMarketResults(filtered, dropdown);
     } else {
+        welcomeDropdownResults = [];
         dropdown.innerHTML = '<div class="market-search-empty">No markets match your search.</div>';
         dropdown.classList.add('visible');
     }
 }
 
 function displayMarketResults(markets, dropdown) {
+    welcomeDropdownResults = markets;
+    welcomeDropdownActiveIndex = -1;
     let html = '';
 
-    markets.forEach(market => {
+    markets.forEach((market, index) => {
         const endDate = market.endDate ? new Date(market.endDate).toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
@@ -1062,7 +1186,7 @@ function displayMarketResults(markets, dropdown) {
         const priceDisplay = prices && prices.length > 0 ? `${(parseFloat(prices[0]) * 100).toFixed(0)}¢ Yes` : '';
 
         html += `
-            <div class="market-search-card" onclick="selectMarket('${escapeHtml(market.question)}', '${market.id}')">
+            <div class="market-search-card" data-index="${index}" onclick="selectMarket('${escapeHtml(market.question)}', '${market.id}')">
                 <div class="market-card-header">
                     <div class="market-card-title">${escapeHtml(market.question)}</div>
                     ${priceDisplay ? `<div class="market-card-price">${priceDisplay}</div>` : ''}
@@ -1174,8 +1298,8 @@ function restartCarousel() {
 }
 
 function startCarousel() {
-    // Auto-advance every 5 seconds
-    carouselInterval = setInterval(nextSlide, 5000);
+    // Auto-advance every 4 seconds
+    carouselInterval = setInterval(nextSlide, 4000);
 }
 
 function stopCarousel() {
@@ -1188,6 +1312,15 @@ function stopCarousel() {
 // Initialize carousel on page load
 window.addEventListener('load', () => {
     startCarousel();
+
+    // Add paste detection for welcome input
+    const welcomeInput = document.getElementById('welcomeInput');
+    if (welcomeInput) {
+        welcomeInput.addEventListener('paste', handleWelcomePaste);
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', handleWelcomeClickOutside);
 });
 
 // Pause on hover, resume on mouse leave

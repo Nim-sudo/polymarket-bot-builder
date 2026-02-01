@@ -110,27 +110,29 @@
                             <span>Introducing PolyBot Builder →</span>
                         </div>
                         <h1 class="welcome-title">Build Your Bot</h1>
-                        <div class="welcome-input-wrapper">
-                            <button class="btn-attach-welcome" title="Attach file">
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M10 3v14M3 10h14"/>
-                                </svg>
-                            </button>
-                            <input
-                                type="text"
-                                id="welcomeInput"
-                                class="welcome-input"
-                                placeholder="Search or paste Polymarket link"
-                                onkeydown="handleWelcomeKeydown(event)"
-                                oninput="searchWelcomeMarkets(this.value)"
-                            />
-                            <button class="btn-send-welcome" onclick="sendFromWelcome()" title="Send">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M8 12V4M4 8l4-4 4 4"/>
-                                </svg>
-                            </button>
+                        <div class="welcome-input-container">
+                            <div class="welcome-input-wrapper">
+                                <button class="btn-attach-welcome" title="Attach file">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M10 3v14M3 10h14"/>
+                                    </svg>
+                                </button>
+                                <input
+                                    type="text"
+                                    id="welcomeInput"
+                                    class="welcome-input"
+                                    placeholder="Search or paste Polymarket link"
+                                    onkeydown="handleWelcomeKeydown(event)"
+                                    oninput="searchWelcomeMarkets(this.value)"
+                                />
+                                <button class="btn-send-welcome" onclick="sendFromWelcome()" title="Send">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M8 12V4M4 8l4-4 4 4"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="welcome-market-dropdown" id="welcomeMarketDropdown"></div>
                         </div>
-                        <div class="welcome-market-dropdown" id="welcomeMarketDropdown"></div>
                         <div class="trending-markets">
                             <h3 class="trending-title">Trending Markets</h3>
                             <div class="trending-carousel">
