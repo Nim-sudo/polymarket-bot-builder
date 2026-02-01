@@ -337,7 +337,7 @@ function sendMessage() {
         }
 
         chat.messages.push({ type: 'assistant', text: response });
-        addMessageToDOM(response, 'assistant');
+        addMessageToDOM(response, 'assistant', true);
 
         saveChats();
         stopStatusAnimation();
@@ -351,7 +351,7 @@ function sendMessage() {
     });
 }
 
-function addMessageToDOM(text, type) {
+function addMessageToDOM(text, type, animated = false) {
     // Hide welcome screen when first message is added
     hideWelcomeScreen();
 
@@ -362,11 +362,59 @@ function addMessageToDOM(text, type) {
 
     const contentDiv = document.createElement('div');
     contentDiv.className = 'message-content';
-    contentDiv.innerHTML = formatMessage(text);
 
     messageDiv.appendChild(contentDiv);
     messagesContainer.appendChild(messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    if (animated && type === 'assistant') {
+        // Typewriter effect for AI responses
+        typewriterEffect(contentDiv, text);
+    } else {
+        // Instant display for user messages
+        contentDiv.innerHTML = formatMessage(text);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+}
+
+// Typewriter effect for AI responses
+function typewriterEffect(element, text, speed = 20) {
+    const messagesContainer = document.getElementById('chatMessages');
+    let currentIndex = 0;
+    const formattedText = formatMessage(text);
+
+    // Create a temporary container to parse HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = formattedText;
+
+    // Get text content while preserving structure
+    const textContent = tempDiv.textContent || tempDiv.innerText;
+
+    element.innerHTML = '';
+
+    function typeNextChar() {
+        if (currentIndex < textContent.length) {
+            // Build the visible portion
+            const visibleText = textContent.substring(0, currentIndex + 1);
+
+            // Re-apply formatting to the visible text
+            const partialFormatted = formatMessage(visibleText);
+            element.innerHTML = partialFormatted;
+
+            currentIndex++;
+
+            // Auto-scroll as text appears
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Continue typing
+            setTimeout(typeNextChar, speed);
+        } else {
+            // Ensure final formatting is correct
+            element.innerHTML = formattedText;
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }
+
+    typeNextChar();
 }
 
 // AI Thinking Animation
@@ -1124,7 +1172,7 @@ function selectTrendingMarket(element) {
     // Add assistant message prompting for bot description
     const promptMessage = `Got it! You've selected: **${marketName}**\n\nNow describe your bot the best you can. What's your trading strategy, goals, and any specific features you want?`;
     chat.messages.push({ type: 'assistant', text: promptMessage });
-    addMessageToDOM(promptMessage, 'assistant');
+    addMessageToDOM(promptMessage, 'assistant', true);
     saveChats();
 
     // Focus on chat input
@@ -1320,7 +1368,7 @@ function selectMarket(marketName, marketId) {
     // Add assistant message prompting for bot description
     const promptMessage = `Got it! You've selected: **${marketName}**\n\nNow describe your bot the best you can. What's your trading strategy, goals, and any specific features you want?`;
     chat.messages.push({ type: 'assistant', text: promptMessage });
-    addMessageToDOM(promptMessage, 'assistant');
+    addMessageToDOM(promptMessage, 'assistant', true);
     saveChats();
 
     // Focus on chat input
@@ -1872,7 +1920,7 @@ function finishQuestions() {
         // Generate AI response to create the bot
         generateAIResponse(chat, 'Please generate the complete bot code based on my answers above.').then(response => {
             chat.messages.push({ type: 'assistant', text: response });
-            addMessageToDOM(response, 'assistant');
+            addMessageToDOM(response, 'assistant', true);
 
             const code = generateBotCode(answerText);
             chat.code = code;
